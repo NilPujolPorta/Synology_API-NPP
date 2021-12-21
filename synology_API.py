@@ -252,13 +252,12 @@ else:
 	print("Emplena el fitxer de configuracio de Base de Dades a config/config.ini")
 	config_object = ConfigParser()
 	config_object["SRV_BDD"] = {
-    	"host": "db.npujol.com",
+    	"host": "localhost",
     	"user": "root",
     	"passwd": "patata"
 	}
 	with open('config.ini', 'w') as conf:
 		config_object.write(conf)
-	quit()
 
 config_object = ConfigParser()
 config_object.read("config.ini")
