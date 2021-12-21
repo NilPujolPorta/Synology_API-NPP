@@ -19,7 +19,7 @@ parser = argparse.ArgumentParser(description='Una API per a recullir invormacio 
 parser.add_argument('-e', '--excel', help='Guardar la informacio a un excel, per defecte esta desactivat', action="store_true")
 parser.add_argument('-q', '--quiet', help='Nomes mostra els errors i el missatge de acabada per pantalla.', action="store_false")
 parser.add_argument('-f', '--file', help='Especificar el fitxer de excel a on guardar. Per defecte es revisio_copies_seguretat_synology_vs1.xlsx', default="revisio_copies_seguretat_synology_vs1.xlsx", metavar="RUTA")
-parser.add_argument('-v', '--versio', help='Mostra la versio', action='version', version='Synology_API-NPP vs1.6')
+parser.add_argument('-v', '--versio', help='Mostra la versio', action='version', version='Synology_API-NPP vs1.6.1')
 args = parser.parse_args()
 
 current_transaction = 2
@@ -108,60 +108,52 @@ def InfoCopies(url, cookie, sid):
 def recoleccioDades(workbook):
 	global current_transaction
 	global fitxer
-	with open('data/dispositius.json', 'r') as f:
-		Backups = []
-
-		mycursor.execute("SELECT * FROM dispositius")
-		num_dispositius = mycursor.rowcount
-		myresult = mycursor.fetchall()
-		for row in myresult:
-			#aconseguir un apartat de la url (aut.cgi o entry.cgi)
-			cookie = row[4]
-			query_parameters = {"api":"SYNO.API.Info", "version":"1", "method":"query", "query":"all"}
-			queryUrl = row[3]+"webapi/query.cgi"
-			try:
-				query = requests.get(queryUrl, params=query_parameters, headers={"cookie": cookie}).json()
-				path= str(query['data']['SYNO.API.Auth']['path'])
-			except:
-				print("Error en la query")
-				now = datetime.datetime.now()
-				date_string = now.strftime('%Y-%m-%d--%H-%M-%S-Query')
-				a = open("errorLogs/"+date_string+".txt",'w')
-				a.write(str(query))
-				a.close()
-
-			user = row[1]
-			password = row[2]
-			url = row[3]+"webapi/"+path
-			url2 = row[3]+"webapi/entry.cgi"
-			nom = row[0]
-			if args.quiet:
-				print(nom)
-
-			try:
-				sid = login(user, password, url, cookie)
-				Backups.append(InfoCopies(url2, cookie, sid))
-				logout(url, sid, cookie)
-			except:
-				now = datetime.datetime.now()
-				date_string = now.strftime('%Y-%m-%d--%H-%M-%S-Conexio')
-				f = open("errorLogs/"+date_string+".txt",'w')
-				f.write("Error en connectar amb la maquina "+nom)
-				f.close()
-				print("Error en connectar amb la maquina")
-				wsdefault = workbook['Sheet']
-				wsdefault.cell(row=current_transaction, column=1, value=nom)
-				wsdefault.cell(row=current_transaction, column=2, value="-")
-				wsdefault.cell(row=current_transaction, column=3, value="Error en connectar amb la maquina")
-				wsdefault.cell(row=current_transaction, column=6, value="-")
-				current_transaction += 1
-				workbook.save(fitxer)
-			if args.quiet:
-				print()
-		Data("w")	#2.592.000			#escriure la ultima data aixis sap desde on mirar les copies, per activar aixo primer he de fer que anexi a el fitxer on envia
-	f.close()
+	Backups = []
+	num_dispositius = len(taulabd)
+	for x in taulabd:
+		#aconseguir un apartat de la url (aut.cgi o entry.cgi)
+		cookie = x[4]
+		query_parameters = {"api":"SYNO.API.Info", "version":"1", "method":"query", "query":"all"}
+		queryUrl = x[3]+"webapi/query.cgi"
+		try:
+			query = requests.get(queryUrl, params=query_parameters, headers={"cookie": cookie}).json()
+			path= str(query['data']['SYNO.API.Auth']['path'])
+		except:
+			print("Error en la query")
+			now = datetime.datetime.now()
+			date_string = now.strftime('%Y-%m-%d--%H-%M-%S-Query')
+			a = open("errorLogs/"+date_string+".txt",'w')
+			a.write(str(query))
+			a.close()
+		user = x[1]
+		password = x[2]
+		url = x[3]+"webapi/"+path
+		url2 = x[3]+"webapi/entry.cgi"
+		nom = x[0]
+		if args.quiet:
+			print(nom)
+		try:
+			sid = login(user, password, url, cookie)
+			Backups.append(InfoCopies(url2, cookie, sid))
+			logout(url, sid, cookie)
+		except:
+			now = datetime.datetime.now()
+			date_string = now.strftime('%Y-%m-%d--%H-%M-%S-Conexio')
+			f = open("errorLogs/"+date_string+".txt",'w')
+			f.write("Error en connectar amb la maquina "+nom)
+			f.close()
+			print("Error en connectar amb la maquina")
+			wsdefault = workbook['Sheet']
+			wsdefault.cell(row=current_transaction, column=1, value=nom)
+			wsdefault.cell(row=current_transaction, column=2, value="-")
+			wsdefault.cell(row=current_transaction, column=3, value="Error en connectar amb la maquina")
+			wsdefault.cell(row=current_transaction, column=6, value="-")
+			current_transaction += 1
+			workbook.save(fitxer)
+		if args.quiet:
+			print()
+	Data("w")	#2.592.000			#escriure la ultima data aixis sap desde on mirar les copies, per activar aixo primer he de fer que anexi a el fitxer on envia
 	return(Backups)
-	f.close()
 
 def statusConvertor(status):
 	if status == 2:
@@ -174,47 +166,39 @@ def statusConvertor(status):
 		return("codi desconegut")
 
 def tamanyRestant(i):
-	with open('data/dispositius.json', 'r') as f:
-		mycursor.execute("SELECT * FROM dispositius")
-		filadb = mycursor.fetchone()
-		url2 = filadb[3]+"webapi/entry.cgi"
-		nom = filadb[0]
-		cookie = filadb[4]
-
-		#aconseguir un apartat de la url (aut.cgi o entry.cgi)
-		queryUrl = filadb[3]+"webapi/query.cgi"
-		query_parameters = {"api":"SYNO.API.Info", "version":"1", "method":"query", "query":"all"}
-		try:
-			query = requests.get(queryUrl, params=query_parameters, headers={"cookie": cookie}).json()
-			path= str(query['data']['SYNO.API.Auth']['path'])
-		except Exception as e:
-			print("Error en la query")
-			now = datetime.datetime.now()
-			date_string = now.strftime('%Y-%m-%d--%H-%M-%S-Query')
-			a = open("errorLogs/"+date_string+".txt",'w')
-			a.write(str(e))
-			a.close()
-
-		user = filadb[1]
-		password = filadb[2]
-		url = filadb[3]+"webapi/"+path
-		
-		my_headers = {"cookie": cookie}
-		try:
-			sid = login(user, password, url, cookie)
-			tamany_parameters = {"api":"SYNO.FileStation.List", "version":"2", "method":"list_share", "additional":'["volume_status"]', "_sid": sid}
-			response = requests.get(url2, params=tamany_parameters, headers=my_headers).json()
-			espaiLliure = round(((response['data']['shares'][0]['additional']['volume_status']['freespace']/1024)/1024)/1024)
-			f.close()
-			return(espaiLliure)
-		except Exception as e:
-			now = datetime.datetime.now()
-			date_string = now.strftime('%Y-%m-%d--%H-%M-%S-Conexio')
-			f = open("errorLogs/"+date_string+".txt",'w')
-			f.write("Error en connectar amb la maquina "+nom)
-			f.close()
-			return("Fallo en la conexio")
-	f.close()
+	url2 = taulabd[i][3]+"webapi/entry.cgi"
+	nom = taulabd[i][0]
+	cookie = taulabd[i][4]
+	#aconseguir un apartat de la url (aut.cgi o entry.cgi)
+	queryUrl = taulabd[i][3]+"webapi/query.cgi"
+	query_parameters = {"api":"SYNO.API.Info", "version":"1", "method":"query", "query":"all"}
+	try:
+		query = requests.get(queryUrl, params=query_parameters, headers={"cookie": cookie}).json()
+		path= str(query['data']['SYNO.API.Auth']['path'])
+		url = taulabd[i][3]+"webapi/"+path
+	except Exception as e:
+		print("Error en la query")
+		now = datetime.datetime.now()
+		date_string = now.strftime('%Y-%m-%d--%H-%M-%S-Query')
+		a = open("errorLogs/"+date_string+".txt",'w')
+		a.write(str(e))
+		a.close()
+	user = taulabd[i][1]
+	password = taulabd[i][2]
+	my_headers = {"cookie": cookie}
+	try:
+		sid = login(user, password, url, cookie)
+		tamany_parameters = {"api":"SYNO.FileStation.List", "version":"2", "method":"list_share", "additional":'["volume_status"]', "_sid": sid}
+		response = requests.get(url2, params=tamany_parameters, headers=my_headers).json()
+		espaiLliure = round(((response['data']['shares'][0]['additional']['volume_status']['freespace']/1024)/1024)/1024)
+		return(espaiLliure)
+	except Exception as e:
+		now = datetime.datetime.now()
+		date_string = now.strftime('%Y-%m-%d--%H-%M-%S-Conexio')
+		f = open("errorLogs/"+date_string+".txt",'w')
+		f.write("Error en connectar amb la maquina "+ nom)
+		f.close()
+		return("Fallo en la conexio")
 
 # y es cada transaccio (es reseteja per cada dispositiu)
 # z es personalitzat que es per cada dispositiu que tingui transaccio (es reseteja per cada NAS)
@@ -298,6 +282,12 @@ except:
         mycursor.execute("CREATE TABLE dispositius (nom VARCHAR(255), usuari VARCHAR(255), contassenya VARCHAR(255), url VARCHAR(255), cookie VARCHAR(400), pandoraID INT(3));")
     except:
         print("Login BDD incorrecte")
+taulabd = []
+
+mycursor.execute("SELECT * FROM dispositius")
+resultatbd = mycursor.fetchall()
+for fila in resultatbd:
+	taulabd.append(fila)
 
 if exists(fitxer) == False:
 	workbook = Workbook()
@@ -318,20 +308,10 @@ dadesCopiesTotes = recoleccioDades(workbook)
 num_nas = len(dadesCopiesTotes)
 i=0
 nom_dispositiu=""
-excel = True
-with open('config/api.conf', 'r') as f:
-	linea = str(f.readlines())
-	if linea.find("True") != -1 or linea.find("true") != -1:
-		excel = True
-	elif linea.find("False") != -1 or linea.find("false") != -1:
-		excel = False
-	f.close()
-mycursor.execute("SELECT * FROM dispositius")
 
 while i < num_nas:
-	filadb = mycursor.fetchone()
-	nom_nas = filadb[0]
-	id_pandora = filadb[5]
+	nom_nas = taulabd[i][0]
+	id_pandora = taulabd[i][5]
 	num_copies = int(dadesCopiesTotes[i]['data']['total'])
 	tamanyLliure=tamanyRestant(i)
 	x = 0
