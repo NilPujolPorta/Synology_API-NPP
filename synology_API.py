@@ -10,6 +10,7 @@ from openpyxl import load_workbook
 import os
 import argparse
 import mysql.connector
+from configparser import ConfigParser
 
 #millores a fer:
 # apendre a anexar al excel per poder fer algunes funcions actualment commentades
@@ -19,18 +20,11 @@ parser = argparse.ArgumentParser(description='Una API per a recullir invormacio 
 parser.add_argument('-e', '--excel', help='Guardar la informacio a un excel, per defecte esta desactivat', action="store_true")
 parser.add_argument('-q', '--quiet', help='Nomes mostra els errors i el missatge de acabada per pantalla.', action="store_false")
 parser.add_argument('-f', '--file', help='Especificar el fitxer de excel a on guardar. Per defecte es revisio_copies_seguretat_synology_vs1.xlsx', default="revisio_copies_seguretat_synology_vs1.xlsx", metavar="RUTA")
-parser.add_argument('-v', '--versio', help='Mostra la versio', action='version', version='Synology_API-NPP vs1.6.1')
+parser.add_argument('-v', '--versio', help='Mostra la versio', action='version', version='Synology_API-NPP vs1.6.2')
 args = parser.parse_args()
 
 current_transaction = 2
 fitxer = args.file 
-
-#f = open("config/api.conf",'r')
-#linea = str(f.readline())
-#llargada = len(linea)-1
-#linea = linea[6:llargada]
-#fitxer = linea
-#f.close()
 
 def Data(WoR):
 	if WoR == "w":
@@ -252,11 +246,32 @@ def prepExcel(workbook):
 	wsdefault.cell(row=1, column=5, value="Status")
 	wsdefault.cell(row=1, column=6, value="Tamany Lliure GB")
 ###################################################################################################################################################################
+if exists("config/config.ini"):
+	configuracio = True
+else:
+	print("Emplena el fitxer de configuracio de Base de Dades a config/config.ini")
+	config_object = ConfigParser()
+	config_object["SRV_BDD"] = {
+    	"host": "db.npujol.com",
+    	"user": "root",
+    	"passwd": "patata"
+	}
+	with open('config.ini', 'w') as conf:
+		config_object.write(conf)
+	quit()
+
+config_object = ConfigParser()
+config_object.read("config.ini")
+srvinfo = config_object["SRV_BDD"]
+servidor = "{}".format(srvinfo["host"])
+usuari = "{}".format(srvinfo["user"])
+contrassenya = "{}".format(srvinfo["passwd"])
+
 try:
     mydb =mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="patata",
+        host=servidor,
+        user=usuari,
+        password=contrassenya,
         database="synology"
         )
     mycursor = mydb.cursor(buffered=True)
@@ -265,17 +280,17 @@ except:
     try:
         
         mydb =mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="patata"
+            host=servidor,
+            user=usuari,
+            password=contrassenya
             )
         print("Base de dades no existeix, creant-la ...")
         mycursor = mydb.cursor(buffered=True)
         mycursor.execute("CREATE DATABASE synology")
         mydb =mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="patata",
+            host=servidor,
+            user=usuari,
+            password=contrassenya,
             database="synology"
             )
         mycursor = mydb.cursor(buffered=True)
