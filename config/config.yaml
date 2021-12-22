@@ -1,0 +1,4 @@
+- BD:
+    host: localhost
+    passwd: patata
+    user: root
