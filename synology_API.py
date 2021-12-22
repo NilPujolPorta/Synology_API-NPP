@@ -256,11 +256,11 @@ else:
     	"user": "root",
     	"passwd": "patata"
 	}
-	with open('config.ini', 'w') as conf:
+	with open('config/config.ini', 'w') as conf:
 		config_object.write(conf)
 
 config_object = ConfigParser()
-config_object.read("config.ini")
+config_object.read("config/config.ini")
 srvinfo = config_object["SRV_BDD"]
 servidor = "{}".format(srvinfo["host"])
 usuari = "{}".format(srvinfo["user"])
