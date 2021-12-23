@@ -10,7 +10,6 @@ from openpyxl import load_workbook
 import os
 import argparse
 import mysql.connector
-from configparser import ConfigParser
 import yaml #pip install pyyaml
 
 #millores a fer:
@@ -84,7 +83,7 @@ def logout(url, sid, cookie):
 		f.close()
 		print(response)
 
-def InfoCopies(url, cookie, sid):
+def InfoCopies(url, cookie, sid):#2 issue. A vegades dona error sense motiu aparent al fer-ho una segona vega es soluciona
 	copies_parameters = {"api":"SYNO.ActiveBackup.Overview", "version":"1", "method":"list_device_transfer_size", "time_start": int(Data("r")), "time_end": temps(), "_sid": sid}
 	response = requests.get(url, params=copies_parameters, headers={"cookie":cookie}).json()
 	if	response['success'] == True:
@@ -325,9 +324,14 @@ llistaNAS = []
 llistaFinal = [] 
 dadesCopiesTotes = recoleccioDades(workbook)
 num_nas = len(dadesCopiesTotes)
+
+# y es cada transaccio (es reseteja per cada dispositiu)
+# z es personalitzat que es per cada dispositiu que tingui transaccio (es reseteja per cada NAS)
+# x es cada dispositiu (es reseteja per cada NAS)
+# i es cada nas (es reseteja cada execucio)
+# current_transaction es cada transaccio (es reseteja cada execucio)
 i=0
 nom_dispositiu=""
-
 while i < num_nas:
 	nom_nas = taulabd[i][0]
 	id_pandora = taulabd[i][5]

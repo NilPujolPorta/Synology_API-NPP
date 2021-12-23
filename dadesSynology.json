@@ -9,9 +9,9 @@
                         "nomDispositiu": "AURT0001SV0719",
                         "Transferencies": [
                             {
-                                "data": "2021-12-21",
+                                "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 28628.6875
+                                "tamany_transferenciaMB": 20698.5625
                             }
                         ]
                     },
@@ -19,9 +19,9 @@
                         "nomDispositiu": "PCDOLORS",
                         "Transferencies": [
                             {
-                                "data": "2021-12-21",
+                                "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 18023.504306793213
+                                "tamany_transferenciaMB": 1923.5686311721802
                             }
                         ]
                     },
@@ -31,7 +31,7 @@
                             {
                                 "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 1128.605842590332
+                                "tamany_transferenciaMB": 895.1685161590576
                             }
                         ]
                     },
@@ -39,9 +39,9 @@
                         "nomDispositiu": "PCMARC1",
                         "Transferencies": [
                             {
-                                "data": "2021-12-21",
+                                "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 4191.379502296448
+                                "tamany_transferenciaMB": 1608.255639076233
                             }
                         ]
                     },
@@ -49,9 +49,9 @@
                         "nomDispositiu": "PCUSUARI3",
                         "Transferencies": [
                             {
-                                "data": "2021-12-21",
+                                "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 1204.0234375
+                                "tamany_transferenciaMB": 1182.0859375
                             }
                         ]
                     }
@@ -65,9 +65,9 @@
                         "nomDispositiu": "CECASSERVER.cecasdom.com",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 11225.0
+                                "tamany_transferenciaMB": 11997.5
                             }
                         ]
                     },
@@ -75,9 +75,9 @@
                         "nomDispositiu": "ts01.cecasdom.com",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 46601.5
+                                "tamany_transferenciaMB": 51056.0
                             }
                         ]
                     }
@@ -91,9 +91,9 @@
                         "nomDispositiu": "PC01SRV",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 2660.6875
+                                "tamany_transferenciaMB": 1046.125
                             }
                         ]
                     },
@@ -111,9 +111,9 @@
                         "nomDispositiu": "ESMC Sitic",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 249.0
+                                "tamany_transferenciaMB": 169.6875
                             }
                         ]
                     },
@@ -121,9 +121,9 @@
                         "nomDispositiu": "sc01dc",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 268.0
+                                "tamany_transferenciaMB": 284.375
                             }
                         ]
                     },
@@ -135,9 +135,9 @@
                         "nomDispositiu": "PASERVER",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 622.0
+                                "tamany_transferenciaMB": 566.875
                             }
                         ]
                     },
@@ -145,9 +145,9 @@
                         "nomDispositiu": "SRVTERM",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 1413.078125
+                                "tamany_transferenciaMB": 931.265625
                             }
                         ]
                     },
@@ -169,9 +169,9 @@
                         "nomDispositiu": "Pandora",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 147.5625
+                                "tamany_transferenciaMB": 224.6875
                             }
                         ]
                     },
@@ -179,9 +179,9 @@
                         "nomDispositiu": "ASTERISK",
                         "Transferencies": [
                             {
-                                "data": "2021-12-21",
+                                "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 121.640625
+                                "tamany_transferenciaMB": 100.5
                             }
                         ]
                     },
@@ -189,9 +189,9 @@
                         "nomDispositiu": "EIOCRM",
                         "Transferencies": [
                             {
-                                "data": "2021-12-21",
+                                "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 865.546875
+                                "tamany_transferenciaMB": 1569.515625
                             }
                         ]
                     },
@@ -199,9 +199,9 @@
                         "nomDispositiu": "EIODOM",
                         "Transferencies": [
                             {
-                                "data": "2021-12-21",
+                                "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 3520.65625
+                                "tamany_transferenciaMB": 5849.234375
                             }
                         ]
                     },
@@ -209,9 +209,9 @@
                         "nomDispositiu": "EIOKIS",
                         "Transferencies": [
                             {
-                                "data": "2021-12-21",
+                                "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 5667.59375
+                                "tamany_transferenciaMB": 6916.75
                             }
                         ]
                     },
@@ -219,9 +219,9 @@
                         "nomDispositiu": "EIOSQL",
                         "Transferencies": [
                             {
-                                "data": "2021-12-21",
+                                "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 16624.78125
+                                "tamany_transferenciaMB": 14955.0625
                             }
                         ]
                     },
@@ -229,9 +229,9 @@
                         "nomDispositiu": "EIOTERM",
                         "Transferencies": [
                             {
-                                "data": "2021-12-21",
+                                "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 292.421875
+                                "tamany_transferenciaMB": 294.625
                             }
                         ]
                     },
@@ -239,9 +239,9 @@
                         "nomDispositiu": "SRV001",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 21168.61328125
+                                "tamany_transferenciaMB": 21895.29296875
                             }
                         ]
                     },
@@ -249,9 +249,9 @@
                         "nomDispositiu": "ASPERO-SER",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 60135.09995651245
+                                "tamany_transferenciaMB": 61509.28676223755
                             }
                         ]
                     },
@@ -259,9 +259,9 @@
                         "nomDispositiu": "UC00",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 1389.8125
+                                "tamany_transferenciaMB": 1392.0
                             }
                         ]
                     },
@@ -269,9 +269,9 @@
                         "nomDispositiu": "SAPB1",
                         "Transferencies": [
                             {
-                                "data": "2021-12-21",
+                                "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 1678.53125
+                                "tamany_transferenciaMB": 1696.765625
                             }
                         ]
                     },
@@ -279,7 +279,7 @@
                         "nomDispositiu": "SRVMAIL",
                         "Transferencies": [
                             {
-                                "data": "2021-12-21",
+                                "data": "2021-12-22",
                                 "status": "Correcte",
                                 "tamany_transferenciaMB": 0.0
                             }
@@ -293,9 +293,9 @@
                         "nomDispositiu": "SRVDADES",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 20378.890625
+                                "tamany_transferenciaMB": 20449.953125
                             }
                         ]
                     }
@@ -309,9 +309,9 @@
                         "nomDispositiu": "PC-XEROX",
                         "Transferencies": [
                             {
-                                "data": "2021-12-21",
+                                "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 1230.5859375
+                                "tamany_transferenciaMB": 1131.2734375
                             }
                         ]
                     },
@@ -333,9 +333,9 @@
                         "nomDispositiu": "SERVER",
                         "Transferencies": [
                             {
-                                "data": "2021-12-21",
+                                "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 8145.1181898117065
+                                "tamany_transferenciaMB": 8055.180748939514
                             }
                         ]
                     },
@@ -343,9 +343,9 @@
                         "nomDispositiu": "HP-DAVID",
                         "Transferencies": [
                             {
-                                "data": "2021-12-21",
+                                "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 2252.0859375
+                                "tamany_transferenciaMB": 1799.3359375
                             }
                         ]
                     },
@@ -353,9 +353,9 @@
                         "nomDispositiu": "CENTRAL",
                         "Transferencies": [
                             {
-                                "data": "2021-12-21",
+                                "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 2984.0859375
+                                "tamany_transferenciaMB": 9515.9609375
                             }
                         ]
                     },
@@ -363,9 +363,9 @@
                         "nomDispositiu": "PC1",
                         "Transferencies": [
                             {
-                                "data": "2021-12-21",
+                                "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 2867.7077264785767
+                                "tamany_transferenciaMB": 1828.1452264785767
                             }
                         ]
                     }
@@ -405,9 +405,9 @@
                         "nomDispositiu": "AURT0001SV0719",
                         "Transferencies": [
                             {
-                                "data": "2021-12-21",
+                                "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 28628.6875
+                                "tamany_transferenciaMB": 20698.5625
                             }
                         ]
                     },
@@ -415,9 +415,9 @@
                         "nomDispositiu": "PCDOLORS",
                         "Transferencies": [
                             {
-                                "data": "2021-12-21",
+                                "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 18023.504306793213
+                                "tamany_transferenciaMB": 1923.5686311721802
                             }
                         ]
                     },
@@ -427,7 +427,7 @@
                             {
                                 "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 1128.605842590332
+                                "tamany_transferenciaMB": 895.1685161590576
                             }
                         ]
                     },
@@ -435,9 +435,9 @@
                         "nomDispositiu": "PCMARC1",
                         "Transferencies": [
                             {
-                                "data": "2021-12-21",
+                                "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 4191.379502296448
+                                "tamany_transferenciaMB": 1608.255639076233
                             }
                         ]
                     },
@@ -445,9 +445,9 @@
                         "nomDispositiu": "PCUSUARI3",
                         "Transferencies": [
                             {
-                                "data": "2021-12-21",
+                                "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 1204.0234375
+                                "tamany_transferenciaMB": 1182.0859375
                             }
                         ]
                     }
@@ -461,9 +461,9 @@
                         "nomDispositiu": "SERVER1",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 1052.4371633529663
+                                "tamany_transferenciaMB": 768.5622539520264
                             }
                         ]
                     },
@@ -471,9 +471,9 @@
                         "nomDispositiu": "PCDIRECCIO",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 1861.5234375
+                                "tamany_transferenciaMB": 2544.4609375
                             }
                         ]
                     }
@@ -504,22 +504,16 @@
                         ]
                     },
                     {
-                        "nomDispositiu": "Server225",
-                        "Transferencies": [
-                            {
-                                "data": "2021-11-23",
-                                "status": "Correcte",
-                                "tamany_transferenciaMB": 283465.375
-                            }
-                        ]
+                        "nomDispositiu": "",
+                        "Transferencies": []
                     },
                     {
                         "nomDispositiu": "PcVirtual1 - planella",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 164.8125
+                                "tamany_transferenciaMB": 184.125
                             }
                         ]
                     },
@@ -527,9 +521,9 @@
                         "nomDispositiu": "Server215 - KSC",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 2422.875
+                                "tamany_transferenciaMB": 1906.625
                             }
                         ]
                     },
@@ -537,9 +531,9 @@
                         "nomDispositiu": "Server219 - TS",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 1022.0
+                                "tamany_transferenciaMB": 830.625
                             }
                         ]
                     },
@@ -547,9 +541,9 @@
                         "nomDispositiu": "Server220 - Web",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 223.4375
+                                "tamany_transferenciaMB": 217.9375
                             }
                         ]
                     },
@@ -557,9 +551,9 @@
                         "nomDispositiu": "Server236 - Qlik",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 660.125
+                                "tamany_transferenciaMB": 637.6875
                             }
                         ]
                     },
@@ -567,9 +561,9 @@
                         "nomDispositiu": "pcvirutal09_win10 - EDI",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 1526.8125
+                                "tamany_transferenciaMB": 3390.625
                             }
                         ]
                     },
@@ -577,9 +571,9 @@
                         "nomDispositiu": "SERVER203 - Progress",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 6883.0
+                                "tamany_transferenciaMB": 6777.25
                             }
                         ]
                     },
@@ -587,9 +581,9 @@
                         "nomDispositiu": "Server221- Aduana",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 3591.125
+                                "tamany_transferenciaMB": 248.1875
                             }
                         ]
                     },
@@ -597,9 +591,9 @@
                         "nomDispositiu": "Server223",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 2346.0625
+                                "tamany_transferenciaMB": 2018.875
                             }
                         ]
                     },
@@ -607,9 +601,9 @@
                         "nomDispositiu": "Server224 - AD2k12 - restored",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 1733.1875
+                                "tamany_transferenciaMB": 1640.25
                             }
                         ]
                     },
@@ -617,9 +611,9 @@
                         "nomDispositiu": "Server228 - GMagat",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 688.5
+                                "tamany_transferenciaMB": 286.0
                             }
                         ]
                     },
@@ -627,9 +621,9 @@
                         "nomDispositiu": "Server229 - IP6",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 7816.4375
+                                "tamany_transferenciaMB": 11510.3125
                             }
                         ]
                     },
@@ -637,9 +631,9 @@
                         "nomDispositiu": "Server238 - InterCompany",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 1474.125
+                                "tamany_transferenciaMB": 1425.25
                             }
                         ]
                     },
@@ -647,9 +641,9 @@
                         "nomDispositiu": "Server244 - Dades",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 1219.0
+                                "tamany_transferenciaMB": 1074.5625
                             }
                         ]
                     },
@@ -657,9 +651,9 @@
                         "nomDispositiu": "pcvirtual08_win7 - Spiceworks",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 359.5625
+                                "tamany_transferenciaMB": 470.9375
                             }
                         ]
                     },
@@ -677,9 +671,9 @@
                         "nomDispositiu": "ServerBCN220 - dcserver BCN",
                         "Transferencies": [
                             {
-                                "data": "2021-12-21",
+                                "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 611.5625
+                                "tamany_transferenciaMB": 758.75
                             }
                         ]
                     },
@@ -687,9 +681,9 @@
                         "nomDispositiu": "SERVER208",
                         "Transferencies": [
                             {
-                                "data": "2021-12-21",
+                                "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 415.02292251586914
+                                "tamany_transferenciaMB": 550.0849351882935
                             }
                         ]
                     },
@@ -697,9 +691,9 @@
                         "nomDispositiu": "SERVER222",
                         "Transferencies": [
                             {
-                                "data": "2021-12-21",
+                                "data": "2021-12-22",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 364.0625
+                                "tamany_transferenciaMB": 338.4375
                             }
                         ]
                     },
@@ -707,9 +701,9 @@
                         "nomDispositiu": "Server200-VCenter",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 1736.9375
+                                "tamany_transferenciaMB": 1795.5
                             }
                         ]
                     },
@@ -717,9 +711,9 @@
                         "nomDispositiu": "server251 - Unifi controller",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 203.1875
+                                "tamany_transferenciaMB": 199.1875
                             }
                         ]
                     },
@@ -727,9 +721,9 @@
                         "nomDispositiu": "Server237 - SAPupdate (1)",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 131277.1875
+                                "tamany_transferenciaMB": 130238.0625
                             }
                         ]
                     },
@@ -737,9 +731,9 @@
                         "nomDispositiu": "Server226",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 1333.625
+                                "tamany_transferenciaMB": 1602.125
                             }
                         ]
                     },
@@ -747,9 +741,9 @@
                         "nomDispositiu": "Server227",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 114897.5
+                                "tamany_transferenciaMB": 114431.25
                             }
                         ]
                     },
@@ -757,9 +751,9 @@
                         "nomDispositiu": "Server235 - TS B1 Nou",
                         "Transferencies": [
                             {
-                                "data": "2021-12-22",
+                                "data": "2021-12-23",
                                 "status": "Correcte",
-                                "tamany_transferenciaMB": 5200.8125
+                                "tamany_transferenciaMB": 4334.4375
                             }
                         ]
                     }
