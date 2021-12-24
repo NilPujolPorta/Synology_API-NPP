@@ -98,6 +98,7 @@ def InfoCopies(url, cookie, sid):#2 issue. A vegades dona error sense motiu apar
 		f.write(str(response))
 		f.close()
 		print(response)
+		return("{'data': {'device_list': , 'total': 0}, 'success': False}")
 
 def recoleccioDades(workbook):
 	global current_transaction
@@ -137,16 +138,19 @@ def recoleccioDades(workbook):
 			f.write("Error en connectar amb la maquina "+nom)
 			f.close()
 			print("Error en connectar amb la maquina")
-			wsdefault = workbook['Sheet']
-			wsdefault.cell(row=current_transaction, column=1, value=nom)
-			wsdefault.cell(row=current_transaction, column=2, value="-")
-			wsdefault.cell(row=current_transaction, column=3, value="Error en connectar amb la maquina")
-			wsdefault.cell(row=current_transaction, column=6, value="-")
+			if args.excel:
+				wsdefault = workbook['Sheet']
+				wsdefault.cell(row=current_transaction, column=1, value=nom)
+				wsdefault.cell(row=current_transaction, column=2, value="-")
+				wsdefault.cell(row=current_transaction, column=3, value="Error en connectar amb la maquina")
+				wsdefault.cell(row=current_transaction, column=6, value="-")
+				workbook.save(fitxer)
 			current_transaction += 1
-			workbook.save(fitxer)
+			codenaError = {'data': {'total': 0}, 'success': False}
+			Backups.append(codenaError)
 		if args.quiet:
 			print()
-	Data("w")	#2.592.000			#escriure la ultima data aixis sap desde on mirar les copies, per activar aixo primer he de fer que anexi a el fitxer on envia
+	Data("w")	#escriure la ultima data aixis sap desde on mirar les copies, per activar aixo primer he de fer que anexi a el fitxer on envia
 	return(Backups)
 
 def statusConvertor(status):
@@ -313,10 +317,10 @@ if exists(fitxer) == False:
 	workbook.save(fitxer)
 	
 workbook = load_workbook(filename = fitxer)
-
-for sheet in workbook:
-	if sheet.title != "Sheet":
-		workbook.remove(sheet)
+if args.excel:
+	for sheet in workbook:
+		if sheet.title != "Sheet":
+			workbook.remove(sheet)
 
 llistaTransf = []
 llistadispCopia = []
