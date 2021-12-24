@@ -1,5 +1,5 @@
 openpyxl
 pyyaml
-rquests
+requests
 pyotp
 mysql-connector-python
