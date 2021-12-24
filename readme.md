@@ -3,8 +3,10 @@
 
 - Per executar el programa s'ha de tenir instalat el python versio 3 o mes.
 - Requeriments a requirements.txt.
+- Configuració de la base de dades a `config/config.yaml`
+- Logs de errors a `errorLogs/*txt`
+- Executar amb opcio -h per veure mes opcions i funcionalitats.
 
-    
 - Per afegir un nou dispositiu ves al fitxer data/dispositius.json i despres de l'ultim dispositiu afegim una coma
   i seguidament el seguent amb les dades que corresponguin:
 ```
@@ -23,3 +25,6 @@
 - A vegades peta la primera vegada el access al excel, si passa tornar a executar(recomanat fer-ho sempre).
 - Si s'interumpeix a mitges el excel pot quedar corromput, pero al borrar-lo  i executar-ho una altre vegada s'arregla.
 
+### Proximament:
+1. Afegir estandar d'estructura de Base de dades
+2. Afegir support per altres bases de dades a part de mysql
