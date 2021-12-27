@@ -2,9 +2,7 @@ import requests
 import json
 from datetime import datetime,timezone
 import datetime
-import time
 from os.path import exists	
-import openpyxl	
 from openpyxl import Workbook
 from openpyxl import load_workbook
 import os
@@ -14,17 +12,6 @@ import yaml
 
 #millores a fer:
 # apendre a anexar al excel per poder fer algunes funcions actualment commentades
-
-
-parser = argparse.ArgumentParser(description='Una API per a recullir invormacio de varis NAS Synology que tinguin la versio 6 o mes.', epilog="Per configuracio adicional anar a config/api.conf")
-parser.add_argument('-e', '--excel', help='Guardar la informacio a un excel, per defecte esta desactivat', action="store_true")
-parser.add_argument('-q', '--quiet', help='Nomes mostra els errors i el missatge de acabada per pantalla.', action="store_false")
-parser.add_argument('-f', '--file', help='Especificar el fitxer de excel a on guardar. Per defecte es revisio_copies_seguretat_synology_vs1.xlsx', default="revisio_copies_seguretat_synology_vs1.xlsx", metavar="RUTA")
-parser.add_argument('-v', '--versio', help='Mostra la versio', action='version', version='Synology_API-NPP vs1.6.5')
-args = parser.parse_args()
-
-current_transaction = 2
-fitxer = args.file 
 
 # Escriure o llegir del fitxer de data/data.txt, en el qual es guarda la ultima data on es va agafar dades de synology menys un mes
 # WoR determina si escriu "w" o si llegeix "r"
@@ -279,7 +266,78 @@ def prepExcel(workbook):
 	wsdefault.cell(row=1, column=5, value="Status")
 	wsdefault.cell(row=1, column=6, value="Tamany Lliure GB")
 
+#Acces a la base de dades i recoleccio de la informacio
+#Els parametres son les credencials i la ip/host de la base de dades
+#Retorna una llista igual a la base de dades
+def bd(servidor, usuari, contrassenya):
+	try:
+		mydb =mysql.connector.connect(
+    	    host=servidor,
+    	    user=usuari,
+    	    password=contrassenya,
+    	    database="synology"
+    	    )
+		mycursor = mydb.cursor(buffered=True)
+		print("Access BDD correcte")
+	except:
+		try:        
+			mydb =mysql.connector.connect(
+	            host=servidor,
+	            user=usuari,
+	            password=contrassenya
+	            )
+			print("Base de dades no existeix, creant-la ...")
+			mycursor = mydb.cursor(buffered=True)
+			mycursor.execute("CREATE DATABASE synology")
+			mydb =mysql.connector.connect(
+	            host=servidor,
+	            user=usuari,
+	            password=contrassenya,
+	            database="synology"
+	            )
+			mycursor = mydb.cursor(buffered=True)
+			mycursor.execute("CREATE TABLE dispositius (nom VARCHAR(255), usuari VARCHAR(255), contassenya VARCHAR(255), url VARCHAR(255), cookie VARCHAR(400), pandoraID INT(3));")
+		except:
+			print("Login BDD incorrecte")
+			quit()
+	taulabdi = []
+
+	mycursor.execute("SELECT * FROM dispositius")
+	resultatbd = mycursor.fetchall()
+	for fila in resultatbd:
+		taulabdi.append(fila)
+	return(taulabdi)
+
+#Escriu les dades finals en un fitxer .json
+#El paramatra es la llista a on estan guardades les dades tot i que no faria falta posarla com a parametre ja que es global
+#No retorna res
+def escriureDadesJSON(llistaFinal):
+	if exists("dadesSynology.json") == True:
+			os.remove("dadesSynology.json")
+	try:
+		with open("dadesSynology.json", 'w') as f:
+			json.dump(llistaFinal, f, indent = 4)
+	except Exception as e:
+			print("Error d'escriptura de json")
+			now = datetime.datetime.now()
+			date_string = now.strftime('%Y-%m-%d--%H-%M-%S-json')
+			f = open("errorLogs/"+date_string+".txt",'w')
+			f.write("Error d'escriptura de json "+str(e))
+			f.close()
+	if not(args.quiet):
+		print("Done")
+
 ###################################################################################################################################################################
+
+parser = argparse.ArgumentParser(description='Una API per a recullir invormacio de varis NAS Synology que tinguin la versio 6 o mes.', epilog="Per configuracio adicional anar a config/api.conf")
+parser.add_argument('-e', '--excel', help='Guardar la informacio a un excel, per defecte esta desactivat', action="store_true")
+parser.add_argument('-q', '--quiet', help='Nomes mostra els errors i el missatge de acabada per pantalla.', action="store_false")
+parser.add_argument('-f', '--file', help='Especificar el fitxer de excel a on guardar. Per defecte es revisio_copies_seguretat_synology_vs1.xlsx', default="revisio_copies_seguretat_synology_vs1.xlsx", metavar="RUTA")
+parser.add_argument('-v', '--versio', help='Mostra la versio', action='version', version='Synology_API-NPP vs1.6.5')
+args = parser.parse_args()
+
+current_transaction = 2
+fitxer = args.file 
 
 if exists("config/config.yaml"):
 	configuracio = True
@@ -304,43 +362,7 @@ servidor = data[0]['BD']['host']
 usuari = data[0]['BD']['user']
 contrassenya = data[0]['BD']['passwd']
 
-try:
-    mydb =mysql.connector.connect(
-        host=servidor,
-        user=usuari,
-        password=contrassenya,
-        database="synology"
-        )
-    mycursor = mydb.cursor(buffered=True)
-    print("Access BDD correcte")
-except:
-	try:
-        
-		mydb =mysql.connector.connect(
-            host=servidor,
-            user=usuari,
-            password=contrassenya
-            )
-		print("Base de dades no existeix, creant-la ...")
-		mycursor = mydb.cursor(buffered=True)
-		mycursor.execute("CREATE DATABASE synology")
-		mydb =mysql.connector.connect(
-            host=servidor,
-            user=usuari,
-            password=contrassenya,
-            database="synology"
-            )
-		mycursor = mydb.cursor(buffered=True)
-		mycursor.execute("CREATE TABLE dispositius (nom VARCHAR(255), usuari VARCHAR(255), contassenya VARCHAR(255), url VARCHAR(255), cookie VARCHAR(400), pandoraID INT(3));")
-	except:
-		print("Login BDD incorrecte")
-		quit()
-taulabd = []
-
-mycursor.execute("SELECT * FROM dispositius")
-resultatbd = mycursor.fetchall()
-for fila in resultatbd:
-	taulabd.append(fila)
+taulabd = bd(servidor, usuari, contrassenya)
 
 if exists(fitxer) == False:
 	workbook = Workbook()
@@ -356,7 +378,6 @@ if args.excel:
 llistaTransf = []
 llistadispCopia = []
 llistaNAS = []
-llistaFinal = [] 
 dadesCopiesTotes = recoleccioDades(workbook)
 num_nas = len(dadesCopiesTotes)
 
@@ -426,18 +447,5 @@ while i < num_nas:
 	llistaNAS.append({"nomNAS":nom_nas, "ID Pandora":id_pandora, "copies":llistadispCopia})
 	llistadispCopia = []
 	i += 1
-llistaFinal = [{"NAS":llistaNAS}]
-if exists("dadesSynology.json") == True:
-        os.remove("dadesSynology.json")
-try:
-	with open("dadesSynology.json", 'w') as f:
-		json.dump(llistaFinal, f, indent = 4)
-except Exception as e:
-		print("Error d'escriptura de json")
-		now = datetime.datetime.now()
-		date_string = now.strftime('%Y-%m-%d--%H-%M-%S-json')
-		f = open("errorLogs/"+date_string+".txt",'w')
-		f.write("Error d'escriptura de json "+str(e))
-		f.close()
-if not(args.quiet):
-	print("Done")
+
+escriureDadesJSON([{"NAS":llistaNAS}])
