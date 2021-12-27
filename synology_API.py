@@ -329,7 +329,7 @@ def escriureDadesJSON(llistaFinal):
 
 ###################################################################################################################################################################
 
-parser = argparse.ArgumentParser(description='Una API per a recullir invormacio de varis NAS Synology que tinguin la versio 6 o mes.', epilog="Per configuracio adicional anar a config/api.conf")
+parser = argparse.ArgumentParser(description='Una API per a recullir invormacio de varis NAS Synology que tinguin la versio 6 o mes.', epilog="Per configuracio adicional anar a config/config.yaml")
 parser.add_argument('-e', '--excel', help='Guardar la informacio a un excel, per defecte esta desactivat', action="store_true")
 parser.add_argument('-q', '--quiet', help='Nomes mostra els errors i el missatge de acabada per pantalla.', action="store_false")
 parser.add_argument('-f', '--file', help='Especificar el fitxer de excel a on guardar. Per defecte es revisio_copies_seguretat_synology_vs1.xlsx', default="revisio_copies_seguretat_synology_vs1.xlsx", metavar="RUTA")
@@ -384,37 +384,35 @@ num_nas = len(dadesCopiesTotes)
 # y es cada transaccio (es reseteja per cada dispositiu)
 # z es personalitzat que es per cada dispositiu que tingui transaccio (es reseteja per cada NAS)
 # x es cada dispositiu (es reseteja per cada NAS)
-# i es cada nas (es reseteja cada execucio)
+# nas es cada nas (es reseteja cada execucio)
 # current_transaction es cada transaccio (es reseteja cada execucio)
-i=0
 nom_dispositiu=""
-while i < num_nas:
-	nom_nas = taulabd[i][0]
-	id_pandora = taulabd[i][5]
-	num_copies = int(dadesCopiesTotes[i]['data']['total'])
-	tamanyLliure=tamanyRestant(i)
+for nas in num_nas:
+	nom_nas = taulabd[nas][0]
+	id_pandora = taulabd[nas][5]
+	num_copies = int(dadesCopiesTotes[nas]['data']['total'])
+	tamanyLliure=tamanyRestant(nas)
 	x = 0
 	z = 0
 	while x < num_copies: 
-		if len(dadesCopiesTotes[i]['data']['device_list'][x]['transfer_list']) != 0:
-			num_transferencies = len(dadesCopiesTotes[i]['data']['device_list'][x]['transfer_list'])
+		if len(dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list']) != 0:
+			num_transferencies = len(dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'])
 
 			y=0
 			while y < num_transferencies:
-				nom_dispositiu = dadesCopiesTotes[i]['data']['device_list'][x]['transfer_list'][y]['device_name']
-				status = statusConvertor(dadesCopiesTotes[i]['data']['device_list'][x]['transfer_list'][y]['status'])
-				tamany_transferencia = dadesCopiesTotes[i]['data']['device_list'][x]['transfer_list'][y]['transfered_bytes']
-				temps_finalitzacio = dadesCopiesTotes[i]['data']['device_list'][x]['transfer_list'][y]['time_end']
-				if y==0:
-					if args.quiet:
+				nom_dispositiu = dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['device_name']
+				status = statusConvertor(dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['status'])
+				tamany_transferencia = dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['transfered_bytes']
+				temps_finalitzacio = dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['time_end']
+				if args.quiet:
+					if y==0:
 						print()
 						print(nom_dispositiu)
 						print("[", end="")
-				if status == "Correcte":
-					if args.quiet:
+					if status == "Correcte":
 						print("#", end="")
-				elif args.quiet:
-					print("X", end="")
+					elif args.quiet:
+						print("X", end="")
 
 				file_time = datetime.datetime.fromtimestamp(temps_finalitzacio)
 				dataF=file_time.strftime('%Y-%m-%d')
@@ -424,7 +422,6 @@ while i < num_nas:
 					llistaTransf.append({"data":dataF, "status":status, "tamany_transferenciaMB":(tamany_transferencia/1024)/1024})
 				if args.excel:
 					escriptorExcel(nom_dispositiu, status, temps_finalitzacio, tamany_transferencia, workbook, y, z, nom_nas, tamanyLliure)
-
 					try:
 						workbook.save(fitxer)
 					except:
@@ -446,6 +443,5 @@ while i < num_nas:
 		x += 1
 	llistaNAS.append({"nomNAS":nom_nas, "ID Pandora":id_pandora, "copies":llistadispCopia})
 	llistadispCopia = []
-	i += 1
 
 escriureDadesJSON([{"NAS":llistaNAS}])
