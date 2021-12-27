@@ -23,6 +23,18 @@
 
 "pandoraID" El numero identificador que te el grup de pandora per exemple Splendid foods  es 15
 ```
+## Ús
+- Executar el fitxer `synology_API.py` o `synology_API.cpython-39.pyc` amb les opcions adients. Llavors les dades es guardaran a `dadesSynology.json` i si la opcio de excel esta activada tambe es guardara a `revisio_copies_seguretat_synology_vs1.xlsx`
+
+- Opcions
+```
+  -h, --help            show this help message and exit
+  -e, --excel           Guardar la informacio a un excel, per defecte esta desactivat
+  -q, --quiet           Nomes mostra els errors i el missatge de acabada per pantalla.
+  -f RUTA, --file RUTA  Especificar el fitxer de excel a on guardar. Per defecte es
+                        revisio_copies_seguretat_synology_vs1.xlsx
+  -v, --versio          Mostra la versio
+```
 
 ### Errors coneguts
 - Si dona error per algun motiu, en els logs et donara un codi, que llavors pots mirar a errorLogs/0codisErrors.txt per saber el seu significat.
