@@ -4,13 +4,13 @@ from datetime import datetime,timezone
 import datetime
 import time
 from os.path import exists	
-import openpyxl				#pip install openpyxl
+import openpyxl	
 from openpyxl import Workbook
 from openpyxl import load_workbook
 import os
 import argparse
 import mysql.connector
-import yaml #pip install pyyaml
+import yaml
 
 #millores a fer:
 # apendre a anexar al excel per poder fer algunes funcions actualment commentades
@@ -20,12 +20,15 @@ parser = argparse.ArgumentParser(description='Una API per a recullir invormacio 
 parser.add_argument('-e', '--excel', help='Guardar la informacio a un excel, per defecte esta desactivat', action="store_true")
 parser.add_argument('-q', '--quiet', help='Nomes mostra els errors i el missatge de acabada per pantalla.', action="store_false")
 parser.add_argument('-f', '--file', help='Especificar el fitxer de excel a on guardar. Per defecte es revisio_copies_seguretat_synology_vs1.xlsx', default="revisio_copies_seguretat_synology_vs1.xlsx", metavar="RUTA")
-parser.add_argument('-v', '--versio', help='Mostra la versio', action='version', version='Synology_API-NPP vs1.6.4')
+parser.add_argument('-v', '--versio', help='Mostra la versio', action='version', version='Synology_API-NPP vs1.6.5')
 args = parser.parse_args()
 
 current_transaction = 2
 fitxer = args.file 
 
+# Escriure o llegir del fitxer de data/data.txt, en el qual es guarda la ultima data on es va agafar dades de synology menys un mes
+# WoR determina si escriu "w" o si llegeix "r"
+# si es tria l'opcio de llegir retorna un string amb el temps en utc timestamp, sino no retorna res 
 def Data(WoR):
 	if WoR == "w":
 		with open('data/data.txt', 'w') as f:
@@ -40,13 +43,16 @@ def Data(WoR):
 	else:
 		print("Error en modificar data/data.txt (el metode de interaccio amb el fitxer es erroni o inexistent)")
 
+#Retorna el temps actual en utc timestamp
 def temps():
 	dt = datetime.datetime.now(timezone.utc)
 	utc_time = dt.replace(tzinfo=timezone.utc)
 	utc_timestamp = utc_time.timestamp()
 	return(round(utc_timestamp))
 
-
+#Es logueja en la webapi de synology 
+#Els parametres son les credencials, la url per fer el logeig i la cookie identificacio enlloc de la sid.
+#Retorna la sid que servira per identificar-nos en les operacions seguents
 def login(user, password, url, cookie):
 	login_parameters = {"api":"SYNO.API.Auth", "version":"3", "method":"login", "account": user, "passwd": password, "session":"ActiveBackup", "format":"cookie"}
 	my_headers = {"cookie": cookie}
@@ -66,6 +72,9 @@ def login(user, password, url, cookie):
 		print(response)
 	return(sid)
 
+#Tanca la sessió anteriorment oberta per la funcio login
+#Els paramatres es la url del lloc de logout i la sid i la cookie per idenficació
+#Retorna la resposta de la webapi tan si es error com si es correcte
 def logout(url, sid, cookie):
 	logout_parameters = {"api":"SYNO.API.Auth", "version":"2", "method":"logout", "session":"ActiveBackup"}
 	my_headers={"cookie": cookie}
@@ -83,7 +92,10 @@ def logout(url, sid, cookie):
 		f.close()
 		print(response)
 
-def InfoCopies(url, cookie, sid):#2 issue. A vegades dona error sense motiu aparent al fer-ho una segona vega es soluciona
+#Aconsegueix la informacio de les copies de seguretat de un NAS
+#Els parametres son la sid i la cookie per identificació i la url del NAS al cual recolectar les dades
+#Retorna les dades en format json i en cas de que dongui error retorna un text en format json sense dades per aixis evitar el issue #3 "Error en les dades que retorna despres de que es trobi amb un nas sense connexio"
+def InfoCopies(url, cookie, sid):#6 issue. A vegades dona error sense motiu aparent al fer-ho una segona vega es soluciona
 	copies_parameters = {"api":"SYNO.ActiveBackup.Overview", "version":"1", "method":"list_device_transfer_size", "time_start": int(Data("r")), "time_end": temps(), "_sid": sid}
 	response = requests.get(url, params=copies_parameters, headers={"cookie":cookie}).json()
 	if	response['success'] == True:
@@ -100,6 +112,9 @@ def InfoCopies(url, cookie, sid):#2 issue. A vegades dona error sense motiu apar
 		print(response)
 		return("{'data': {'device_list': , 'total': 0}, 'success': False}")
 
+#Recull totes les dades de tots els NAS
+#El paramatre workbook es per si la opció del excel es activa escriu dades el excel si no es pot connectar amb la maquina
+#Retorna un array de text en format json amb les dades de cada NAS
 def recoleccioDades(workbook):
 	global current_transaction
 	global fitxer
@@ -153,6 +168,9 @@ def recoleccioDades(workbook):
 	Data("w")	#escriure la ultima data aixis sap desde on mirar les copies, per activar aixo primer he de fer que anexi a el fitxer on envia
 	return(Backups)
 
+#Interpreta el codi de status de les copies
+#El parametre es el codi(int) que ha donat la webapi
+#Retorna el estatus(str) en el cual es troba la copia de seguretat
 def statusConvertor(status):
 	if status == 2:
 		return("Correcte")
@@ -163,6 +181,9 @@ def statusConvertor(status):
 	else:
 		return("codi desconegut")
 
+#Aconsegueix el tamany lliure que li queda a un NAS
+#El parametre es el numero del NAS el ordre depen de la base de dades
+#Retorna el tamany en GB si tot surt be i si no retorna el error
 def tamanyRestant(i):
 	url2 = taulabd[i][3]+"webapi/entry.cgi"
 	nom = taulabd[i][0]
@@ -203,7 +224,9 @@ def tamanyRestant(i):
 # x es cada dispositiu (es reseteja per cada NAS)
 # i es cada nas (es reseteja cada execucio)
 # current_transaction es cada transaccio (es reseteja cada execucio)
-
+#Escriu les dades en un excel, Nomes s'executa quan l'opcio de l'excel esta activada
+##Els parametres inclouen la fulla de excel a on ho escriura(ws), les dades que escriura, i a quines files i columnes (y, z)
+#No retorna res
 def escriureDades(nom_dispositiu, ws, status, temps_finalitzacio, tamany_transferencia, y, z, nom_nas, tamanyLliure):
 	global current_transaction
 	file_time = datetime.datetime.fromtimestamp(temps_finalitzacio)
@@ -230,6 +253,9 @@ def escriureDades(nom_dispositiu, ws, status, temps_finalitzacio, tamany_transfe
 		wsdefault.cell(row=current_transaction, column=6, value=tamanyLliure)
 		current_transaction += 1
 
+#Gestiona l'escriptura a l'excel i a quina fulla escriu i comprova si la fulla existeix o no (lo ultim ja no faria falta ja que les borro totes al principi)
+#Els parametres son: el excel(workbook), les files i columnes a on s'escriura(y, z) i les dades
+#No retorna res
 def escriptorExcel(nom_dispositiu, status, temps_finalitzacio, tamany_transferencia, workbook, y, z, nom_nas, tamanyLliure):
 	trobat = False
 	for sheet in workbook:
@@ -241,6 +267,9 @@ def escriptorExcel(nom_dispositiu, status, temps_finalitzacio, tamany_transferen
 		ws = workbook.create_sheet(nom_nas)
 		escriureDades(nom_dispositiu, ws, status, temps_finalitzacio, tamany_transferencia, y, z, nom_nas, tamanyLliure)
 
+#Prepara la fulla principal del excel en cas de que no existis abans
+#L'únic parametre es el document d'excel
+#No retorna res. S'hauria de fer que tambe dones format condicional entre altres
 def prepExcel(workbook):
 	wsdefault = workbook['Sheet']
 	wsdefault.cell(row=1, column=1, value="Nom NAS")
@@ -249,7 +278,9 @@ def prepExcel(workbook):
 	wsdefault.cell(row=1, column=4, value="Tamany MB")
 	wsdefault.cell(row=1, column=5, value="Status")
 	wsdefault.cell(row=1, column=6, value="Tamany Lliure GB")
+
 ###################################################################################################################################################################
+
 if exists("config/config.yaml"):
 	configuracio = True
 else:
