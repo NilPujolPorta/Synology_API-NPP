@@ -386,8 +386,9 @@ num_nas = len(dadesCopiesTotes)
 # x es cada dispositiu (es reseteja per cada NAS)
 # nas es cada nas (es reseteja cada execucio)
 # current_transaction es cada transaccio (es reseteja cada execucio)
+nas = 0
 nom_dispositiu=""
-for nas in num_nas:
+while nas < num_nas:
 	nom_nas = taulabd[nas][0]
 	id_pandora = taulabd[nas][5]
 	num_copies = int(dadesCopiesTotes[nas]['data']['total'])
@@ -443,5 +444,5 @@ for nas in num_nas:
 		x += 1
 	llistaNAS.append({"nomNAS":nom_nas, "ID Pandora":id_pandora, "copies":llistadispCopia})
 	llistadispCopia = []
-
+	nas +=1
 escriureDadesJSON([{"NAS":llistaNAS}])
