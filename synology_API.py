@@ -13,22 +13,23 @@ import yaml
 #millores a fer:
 # apendre a anexar al excel per poder fer algunes funcions actualment commentades
 
-# Escriure o llegir del fitxer de data/data.txt, en el qual es guarda la ultima data on es va agafar dades de synology menys un mes
+# Escriure o llegir del fitxer de config/config.yaml, en el qual es guarda la ultima data on es va agafar dades de synology menys un mes
 # WoR determina si escriu "w" o si llegeix "r"
 # si es tria l'opcio de llegir retorna un string amb el temps en utc timestamp, sino no retorna res 
 def Data(WoR):
 	if WoR == "w":
-		with open('data/data.txt', 'w') as f:
-			wdata = temps()-2592000
-			f.write(str(wdata))
-			f.close()
+		with open("config/config.yaml") as f:
+			list_doc = yaml.safe_load(f)
+		list_doc[0]['data']=str(temps()-2592000)
+		with open("config/config.yaml", 'w') as yamlfilew:
+			yaml.dump(list_doc, yamlfilew)
+			
 	elif WoR == "r":
-		with open('data/data.txt', 'r') as f:
-			rdata = f.read()
-			f.close()
-			return(rdata)
+		with open("config/config.yaml", 'r') as yamlfiler:
+			data = yaml.load(yamlfiler, Loader=yaml.FullLoader)
+			return(data[0]['data'])
 	else:
-		print("Error en modificar data/data.txt (el metode de interaccio amb el fitxer es erroni o inexistent)")
+		print("Error en modificar config/config.yaml (el metode de interaccio amb el fitxer es erroni o inexistent)")
 
 #Retorna el temps actual en utc timestamp
 def temps():
@@ -339,9 +340,7 @@ args = parser.parse_args()
 current_transaction = 2
 fitxer = args.file 
 
-if exists("config/config.yaml"):
-	configuracio = True
-else:
+if not(exists("config/config.yaml")):
 	print("Emplena el fitxer de configuracio de Base de Dades a config/config.yaml")
 	article_info = [
     	{
@@ -349,7 +348,8 @@ else:
     	    'host' : 'localhost',
     	    'user': 'root',
     	    'passwd': 'patata'
-    	    }
+    	    },
+			'data': str(temps()-2592000)
     	}
 	]
 	with open("config/config.yaml", 'w') as yamlfile:
