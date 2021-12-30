@@ -1,4 +1,7 @@
-dadesSynology.json
-revisio_copies_seguretat_synology_vs1.xlsx
-errorLogs/*
-!errorLogs/0codisErrors.txt
+SynologyAPI/dadesSynology.json
+SynologyAPI/revisio_copies_seguretat_synology_vs1.xlsx
+SynologyAPI/errorLogs/*
+!SynologyAPI/errorLogs/0codisErrors.txt
+SynologyAPI/compilar.bat
+tests
+publish.bat

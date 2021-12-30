@@ -1,5 +1,7 @@
 openpyxl
 pyyaml
 requests
-pyotp
 mysql-connector-python
+argparse
+setuptools
+wheel
