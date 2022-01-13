@@ -99,7 +99,7 @@ def InfoCopies(url, cookie, sid):#6 issue. A vegades dona error sense motiu apar
 		f.write(str(response))
 		f.close()
 		print(response)
-		return("{'data': {'device_list': , 'total': 0}, 'success': False}")
+		return({'data': {'device_list': [], 'total': 0}, 'success': False})
 
 #Recull totes les dades de tots els NAS
 #El paramatre workbook es per si la opció del excel es activa escriu dades el excel si no es pot connectar amb la maquina
