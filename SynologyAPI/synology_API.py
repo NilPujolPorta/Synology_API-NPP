@@ -9,6 +9,7 @@ import os
 import argparse
 import mysql.connector
 import yaml
+from tqdm import tqdm
 
 #millores a fer:
 # apendre a anexar al excel per poder fer algunes funcions actualment commentades
@@ -107,7 +108,6 @@ def recoleccioDades(workbook):
 	global current_transaction
 	global fitxer
 	Backups = []
-	num_dispositius = len(taulabd)
 	for x in taulabd:
 		#aconseguir un apartat de la url (aut.cgi o entry.cgi)
 		cookie = x[4]
@@ -184,7 +184,6 @@ def tamanyRestant(i):
 		path= str(query['data']['SYNO.API.Auth']['path'])
 		url = taulabd[i][3]+"webapi/"+path
 	except Exception as e:
-		print("Error en la query")
 		now = datetime.datetime.now()
 		date_string = now.strftime('%Y-%m-%d--%H-%M-%S-Query')
 		a = open("errorLogs/"+date_string+".txt",'w')
@@ -279,7 +278,8 @@ def bd(servidor, usuari, contrassenya):
     	    database="synology"
     	    )
 		mycursor = mydb.cursor(buffered=True)
-		print("Access BDD correcte")
+		if args.quiet:
+			print("Access BDD correcte")
 	except:
 		try:        
 			mydb =mysql.connector.connect(
@@ -388,7 +388,7 @@ num_nas = len(dadesCopiesTotes)
 # current_transaction es cada transaccio (es reseteja cada execucio)
 nas = 0
 nom_dispositiu=""
-while nas < num_nas:
+for nas in tqdm (range(num_nas), desc="Processar Dades", ncols=100, disable=args.quiet):
 	nom_nas = taulabd[nas][0]
 	id_pandora = taulabd[nas][5]
 	num_copies = int(dadesCopiesTotes[nas]['data']['total'])
@@ -400,20 +400,11 @@ while nas < num_nas:
 			num_transferencies = len(dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'])
 
 			y=0
-			while y < num_transferencies:
+			for y in tqdm (range (num_transferencies), desc=nom_nas +" | "+ dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['device_name'], ncols=125, disable=not(args.quiet)):
 				nom_dispositiu = dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['device_name']
 				status = statusConvertor(dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['status'])
 				tamany_transferencia = dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['transfered_bytes']
 				temps_finalitzacio = dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['time_end']
-				if args.quiet:
-					if y==0:
-						print()
-						print(nom_dispositiu)
-						print("[", end="")
-					if status == "Correcte":
-						print("#", end="")
-					elif args.quiet:
-						print("X", end="")
 
 				file_time = datetime.datetime.fromtimestamp(temps_finalitzacio)
 				dataF=file_time.strftime('%Y-%m-%d')
@@ -432,11 +423,6 @@ while nas < num_nas:
 						f.write("Error de permisos en obrir el Excel (Pot ser que el excel estigui obert?)")
 						f.close()
 						print("Error de permisos")
-
-				y += 1
-			if args.quiet:
-				print("]", end="")
-				print()
 			z += 1
 		llistadispCopia.append({"nomDispositiu":nom_dispositiu, "Transferencies":llistaTransf})
 		nom_dispositiu = ""
