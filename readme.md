@@ -38,7 +38,6 @@
 
 ### Errors coneguts
 - Si dona error per algun motiu, en els logs et donara un codi, que llavors pots mirar a errorLogs/0codisErrors.txt per saber el seu significat.
-- A vegades peta la primera vegada el access al excel, si passa tornar a executar(recomanat fer-ho sempre).
 - Si s'interumpeix a mitges el excel pot quedar corromput, pero al borrar-lo  i executar-ho una altre vegada s'arregla.
 
 ### Proximament:
