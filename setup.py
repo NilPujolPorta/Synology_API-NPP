@@ -54,7 +54,7 @@ pip install SynologyAPI-NPP
 
 """,
       long_description_content_type='text/markdown',
-      url='https://github.com/NilPujolPorta/pyproject',
+      url='https://github.com/NilPujolPorta/Synology_API-NPP',
       author='Nil Pujol Porta',
       author_email='nilpujolporta@gmail.com',
       license='GNU',
