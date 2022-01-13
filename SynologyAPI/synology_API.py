@@ -254,17 +254,34 @@ def escriptorExcel(nom_dispositiu, status, temps_finalitzacio, tamany_transferen
 		ws = workbook.create_sheet(nom_nas)
 		escriureDades(nom_dispositiu, ws, status, temps_finalitzacio, tamany_transferencia, y, z, nom_nas, tamanyLliure)
 
+def borrar(sheet, row):
+	for cell in row:
+		if cell.value == None:
+			return
+		sheet.delete_rows(row[0].row, 1)
+
 #Prepara la fulla principal del excel en cas de que no existis abans
 #L'únic parametre es el document d'excel
 #No retorna res. S'hauria de fer que tambe dones format condicional entre altres
 def prepExcel(workbook):
+	if args.quiet:
+		print("Preparant excel")
+	for sheet in workbook:
+		if sheet.title != "Sheet":
+			workbook.remove(sheet)
+			
 	wsdefault = workbook['Sheet']
+	
+	for row in wsdefault:
+		borrar(wsdefault,row)			
+
 	wsdefault.cell(row=1, column=1, value="Nom NAS")
 	wsdefault.cell(row=1, column=2, value="Nom Dispositiu")
 	wsdefault.cell(row=1, column=3, value="Data")
 	wsdefault.cell(row=1, column=4, value="Tamany MB")
 	wsdefault.cell(row=1, column=5, value="Status")
 	wsdefault.cell(row=1, column=6, value="Tamany Lliure GB")
+
 
 #Acces a la base de dades i recoleccio de la informacio
 #Els parametres son les credencials i la ip/host de la base de dades
@@ -368,12 +385,13 @@ if exists(fitxer) == False:
 	workbook = Workbook()
 	prepExcel(workbook)
 	workbook.save(fitxer)
-	
-workbook = load_workbook(filename = fitxer)
-if args.excel:
-	for sheet in workbook:
-		if sheet.title != "Sheet":
-			workbook.remove(sheet)
+elif args.excel:
+	workbook = load_workbook(filename = fitxer)
+	prepExcel(workbook)
+
+else:
+	workbook = load_workbook(filename = fitxer)
+
 
 llistaTransf = []
 llistadispCopia = []
