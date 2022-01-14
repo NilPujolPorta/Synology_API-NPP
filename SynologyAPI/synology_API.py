@@ -254,15 +254,17 @@ def escriptorExcel(nom_dispositiu, status, temps_finalitzacio, tamany_transferen
 		ws = workbook.create_sheet(nom_nas)
 		escriureDades(nom_dispositiu, ws, status, temps_finalitzacio, tamany_transferencia, y, z, nom_nas, tamanyLliure)
 
+#Complementa a prepExcel pr borrar la primera fulla perque aixis no hi hagi dades d'altres execucions
+#Es crida per cada fila i se li passa la fulla i la fila actual
 def borrar(sheet, row):
 	for cell in row:
 		if cell.value == None:
 			return
 		sheet.delete_rows(row[0].row, 1)
 
-#Prepara la fulla principal del excel en cas de que no existis abans
+#Prepara el excel en cas de que no existis abans (borrant dades ateriors i posant la capçalera)
 #L'únic parametre es el document d'excel
-#No retorna res. S'hauria de fer que tambe dones format condicional entre altres
+#No retorna res.
 def prepExcel(workbook):
 	if args.quiet:
 		print("Preparant excel")
@@ -351,7 +353,7 @@ parser = argparse.ArgumentParser(description='Una API per a recullir invormacio 
 parser.add_argument('-e', '--excel', help='Guardar la informacio a un excel, per defecte esta desactivat', action="store_true")
 parser.add_argument('-q', '--quiet', help='Nomes mostra els errors i el missatge de acabada per pantalla.', action="store_false")
 parser.add_argument('-f', '--file', help='Especificar el fitxer de excel a on guardar. Per defecte es revisio_copies_seguretat_synology_vs1.xlsx', default="revisio_copies_seguretat_synology_vs1.xlsx", metavar="RUTA")
-parser.add_argument('-v', '--versio', help='Mostra la versio', action='version', version='Synology_API-NPP vs1.6.7')
+parser.add_argument('-v', '--versio', help='Mostra la versio', action='version', version='Synology_API-NPP vs1.6.8')
 args = parser.parse_args()
 
 current_transaction = 2
@@ -388,7 +390,6 @@ if exists(fitxer) == False:
 elif args.excel:
 	workbook = load_workbook(filename = fitxer)
 	prepExcel(workbook)
-
 else:
 	workbook = load_workbook(filename = fitxer)
 
@@ -418,7 +419,7 @@ for nas in tqdm (range(num_nas), desc="Processar Dades", ncols=100, disable=args
 			num_transferencies = len(dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'])
 
 			y=0
-			for y in tqdm (range (num_transferencies), desc=nom_nas +" | "+ dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['device_name'], ncols=125, disable=not(args.quiet)):
+			for y in tqdm (range (num_transferencies), desc=nom_nas +" | "+ dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['device_name'], ncols=75, disable=not(args.quiet)):
 				nom_dispositiu = dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['device_name']
 				status = statusConvertor(dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['status'])
 				tamany_transferencia = dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['transfered_bytes']
@@ -427,7 +428,7 @@ for nas in tqdm (range(num_nas), desc="Processar Dades", ncols=100, disable=args
 				file_time = datetime.datetime.fromtimestamp(temps_finalitzacio)
 				dataF=file_time.strftime('%Y-%m-%d')
 				if y+1 < num_transferencies:
-					u=1
+					u=1 #no se que fa
 				else:
 					llistaTransf.append({"data":dataF, "status":status, "tamany_transferenciaMB":(tamany_transferencia/1024)/1024})
 				if args.excel:
