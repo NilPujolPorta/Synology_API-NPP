@@ -388,8 +388,11 @@ if exists(fitxer) == False:
 	prepExcel(workbook)
 	workbook.save(fitxer)
 elif args.excel:
-	workbook = load_workbook(filename = fitxer)
-	prepExcel(workbook)
+	try:
+		workbook = load_workbook(filename = fitxer)
+		prepExcel(workbook, True)
+	except:
+		print("Tanca el excel i torna-ho a provar")
 else:
 	workbook = load_workbook(filename = fitxer)
 
