@@ -1,3 +1,4 @@
+from audioop import add
 import requests
 import json
 from datetime import datetime,timezone
@@ -5,14 +6,15 @@ import datetime
 from os.path import exists	
 from openpyxl import Workbook
 from openpyxl import load_workbook
+from openpyxl.formatting.rule import ColorScaleRule, CellIsRule, FormulaRule
+from openpyxl.styles import Color, PatternFill, Font, Border
+from openpyxl.styles.differential import DifferentialStyle
+from openpyxl.formatting import Rule
 import os
 import argparse
 import mysql.connector
 import yaml
 from tqdm import tqdm
-
-#millores a fer:
-# apendre a anexar al excel per poder fer algunes funcions actualment commentades
 
 # Escriure o llegir del fitxer de config/config.yaml, en el qual es guarda la ultima data on es va agafar dades de synology menys un mes
 # WoR determina si escriu "w" o si llegeix "r"
@@ -262,6 +264,52 @@ def borrar(sheet, row):
 			return
 		sheet.delete_rows(row[0].row, 1)
 
+#Dona format i format condicional a la fulla
+#L'unica dada passada es la fulla
+#Nomes es crida cuan la fulla de excel no existia en la funcio prepExcel()
+def formatar(wsdefault, workbook):
+
+	#ESCALA DE COLORS
+	rule = ColorScaleRule(start_type='num', start_value=50, start_color='F8696B',
+				mid_type='num', mid_value=200, mid_color='FFEB84',
+				end_type='num', end_value=400, end_color='63BE7B'
+	)
+
+	#TEXT VERMELL
+	red_text = Font(color="9C0006")
+	red_fill = PatternFill(bgColor="FFC7CE")
+	dxf1 = DifferentialStyle(font=red_text, fill=red_fill)
+	rule1 = Rule(type="containsText", operator="containsText", text="ERROR", dxf=dxf1)
+	rule1.formula = ['NOT(ISERROR(SEARCH("ERROR",E1)))']
+
+	#TEXT GROC
+	yellow_text = Font(color="9C5700")
+	yellow_fill = PatternFill(bgColor="FFEB9C")
+	dxf2 = DifferentialStyle(font=yellow_text, fill=yellow_fill)
+	rule2 = Rule(type="containsText", operator="containsText", text="Warning", dxf=dxf2)
+	rule2.formula = ['NOT(ISERROR(SEARCH("Warning",E1)))']
+
+	#TEXT VERD
+	green_text = Font(color="006100")
+	green_fill = PatternFill(bgColor="C6EFCE")
+	dxf3 = DifferentialStyle(font=green_text, fill=green_fill)
+	rule3 = Rule(type="containsText", operator="containsText", text="Correcte", dxf=dxf3)
+	rule3.formula = ['NOT(ISERROR(SEARCH("Correcte",E1)))']
+
+	#TEXT TARONJA (Tamany MB)
+	orange_fill = PatternFill(bgColor="FFC000")
+	dxf4 = DifferentialStyle( fill=orange_fill)
+	rule4 = Rule(type="containsText", operator="beginsWith", text="0", dxf=dxf4)
+	rule3.formula = ['NOT(ISERROR(SEARCH("0",D1)))']
+
+	wsdefault.conditional_formatting.add('F1:F500', rule)
+	wsdefault.conditional_formatting.add('E1:E500', rule1)
+	wsdefault.conditional_formatting.add('E1:E500', rule2)
+	wsdefault.conditional_formatting.add('E1:E500', rule3)
+	wsdefault.conditional_formatting.add('D1:D500', rule4)
+	
+	workbook.save(fitxer)
+
 #Prepara el excel en cas de que no existis abans (borrant dades ateriors i posant la capçalera)
 #L'únic parametre es el document d'excel
 #No retorna res.
@@ -274,7 +322,6 @@ def prepExcel(workbook, existeix):
 				workbook.remove(sheet)
 			
 		wsdefault = workbook['Sheet']
-	
 		for row in wsdefault:
 			borrar(wsdefault,row)
 		workbook.save(fitxer)			
@@ -391,7 +438,7 @@ taulabd = bd(servidor, usuari, contrassenya)
 
 if exists(fitxer) == False:
 	workbook = Workbook()
-	prepExcel(workbook)
+	prepExcel(workbook, False)
 	workbook.save(fitxer)
 elif args.excel:
 	try:
