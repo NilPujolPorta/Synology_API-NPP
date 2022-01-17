@@ -265,24 +265,30 @@ def borrar(sheet, row):
 #Prepara el excel en cas de que no existis abans (borrant dades ateriors i posant la capçalera)
 #L'únic parametre es el document d'excel
 #No retorna res.
-def prepExcel(workbook):
+def prepExcel(workbook, existeix):
 	if args.quiet:
 		print("Preparant excel")
-	for sheet in workbook:
-		if sheet.title != "Sheet":
-			workbook.remove(sheet)
+	if existeix:
+		for sheet in workbook:
+			if sheet.title != "Sheet":
+				workbook.remove(sheet)
 			
-	wsdefault = workbook['Sheet']
+		wsdefault = workbook['Sheet']
 	
-	for row in wsdefault:
-		borrar(wsdefault,row)			
-
+		for row in wsdefault:
+			borrar(wsdefault,row)
+		workbook.save(fitxer)			
+	else:
+		wsdefault = workbook['Sheet']
+		formatar(wsdefault, workbook)
+		workbook.save(fitxer)
 	wsdefault.cell(row=1, column=1, value="Nom NAS")
 	wsdefault.cell(row=1, column=2, value="Nom Dispositiu")
 	wsdefault.cell(row=1, column=3, value="Data")
 	wsdefault.cell(row=1, column=4, value="Tamany MB")
 	wsdefault.cell(row=1, column=5, value="Status")
 	wsdefault.cell(row=1, column=6, value="Tamany Lliure GB")
+	workbook.save(fitxer)
 
 
 #Acces a la base de dades i recoleccio de la informacio
