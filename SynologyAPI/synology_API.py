@@ -307,6 +307,13 @@ def formatar(wsdefault, workbook):
 	wsdefault.conditional_formatting.add('E1:E500', rule2)
 	wsdefault.conditional_formatting.add('E1:E500', rule3)
 	wsdefault.conditional_formatting.add('D1:D500', rule4)
+
+	wsdefault.column_dimensions['A'].width = 19
+	wsdefault.column_dimensions['B'].width = 28
+	wsdefault.column_dimensions['C'].width = 10
+	wsdefault.column_dimensions['D'].width = 13
+	wsdefault.column_dimensions['E'].width = 8
+	wsdefault.column_dimensions['F'].width = 18
 	
 	workbook.save(fitxer)
 
