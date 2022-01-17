@@ -410,7 +410,7 @@ num_nas = len(dadesCopiesTotes)
 # current_transaction es cada transaccio (es reseteja cada execucio)
 nas = 0
 nom_dispositiu=""
-for nas in tqdm (range(num_nas), desc="Processar Dades", ncols=100, disable=args.quiet):
+for nas in tqdm (range(num_nas), desc="Processar Dades", disable=args.quiet):
 	nom_nas = taulabd[nas][0]
 	id_pandora = taulabd[nas][5]
 	num_copies = int(dadesCopiesTotes[nas]['data']['total'])
@@ -422,7 +422,7 @@ for nas in tqdm (range(num_nas), desc="Processar Dades", ncols=100, disable=args
 			num_transferencies = len(dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'])
 
 			y=0
-			for y in tqdm (range (num_transferencies), desc=nom_nas +" | "+ dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['device_name'], ncols=75, disable=not(args.quiet)):
+			for y in tqdm (range (num_transferencies), desc=nom_nas +" | "+ dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['device_name'], disable=not(args.quiet)):
 				nom_dispositiu = dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['device_name']
 				status = statusConvertor(dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['status'])
 				tamany_transferencia = dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['transfered_bytes']
