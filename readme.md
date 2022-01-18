@@ -39,10 +39,11 @@
 
 
 ## Ús
-### Maneres d'execució del programa
+### Maneres d'execució del programa (ordenades per recomenades)
+- A la linea de commandes `SynologyAPI-NPP [opcions]`
 - ```python -m SynologyAPI [opcions]```
-- ```./synology_API-runner.py [opcions] ```
 - Executar el fitxer `synology_API.py` o `synology_API.cpython-39.pyc` amb les opcions adients. Llavors les dades es guardaran a `dadesSynology.json` i si la opcio de excel esta activada tambe es guardara a `revisio_copies_seguretat_synology_vs1.xlsx`
+- ```./synology_API-runner.py [opcions] ```
 
 ### Opcions
 ```
