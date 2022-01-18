@@ -26,22 +26,25 @@
 
 ## Instal·lació
 
-Utilitzant pip:
+- Utilitzant pip:
 
-```pip install SynologyAPI-NPP```
+  ```pip install SynologyAPI-NPP```
+  
+- Manualment:
 
-Manualment:
+  ```wget https://files.pythonhosted.org/packages/3a/2b/8eb8454068f2004a927258f82509b0961c7c72d4b7d958a317819608d11d/SynologyAPI-NPP-1.6.8.tar.gz```
 
-```wget https://files.pythonhosted.org/packages/3a/2b/8eb8454068f2004a927258f82509b0961c7c72d4b7d958a317819608d11d/SynologyAPI-NPP-1.6.8.tar.gz```
-
-```tar -xvzf SynologyAPI-NPP-1.6.8.tar.gz```
+  ```tar -xvzf SynologyAPI-NPP-1.6.8.tar.gz```
 
 
 
 ## Ús
+### Maneres d'execució del programa
+- ```python -m SynologyAPI [opcions]```
+- ```./synology_API-runner.py [opcions] ```
 - Executar el fitxer `synology_API.py` o `synology_API.cpython-39.pyc` amb les opcions adients. Llavors les dades es guardaran a `dadesSynology.json` i si la opcio de excel esta activada tambe es guardara a `revisio_copies_seguretat_synology_vs1.xlsx`
 
-- Opcions
+### Opcions
 ```
 usage: synology_API.py [-h] [-e] [-q] [-f RUTA] [-d SEC] [-v]
 

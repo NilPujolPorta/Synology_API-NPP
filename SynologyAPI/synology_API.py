@@ -15,6 +15,8 @@ import mysql.connector
 import yaml
 from tqdm import tqdm
 
+__version__ = "1.7.0"
+
 # Escriure o llegir del fitxer de config/config.yaml, en el qual es guarda la ultima data on es va agafar dades de synology
 # WoR determina si escriu "w" o si llegeix "r"
 # si es tria l'opcio de llegir retorna un string amb el temps en utc timestamp, sino no retorna res 
@@ -344,7 +346,6 @@ def prepExcel(workbook, existeix):
 	wsdefault.cell(row=1, column=6, value="Tamany Lliure GB")
 	workbook.save(fitxer)
 
-
 #Acces a la base de dades i recoleccio de la informacio
 #Els parametres son les credencials i la ip/host de la base de dades
 #Retorna una llista igual a la base de dades
@@ -407,111 +408,117 @@ def escriureDadesJSON(llistaFinal):
 	if not(args.quiet):
 		print("Done")
 
-###################################################################################################################################################################
+#Juntament amb les altres funcions agafa les dades de varis synologys les processa en un JSON i, si s'escull l'opcio un excel
+#No te paramatres pero te unes quantes variables globals
+def main():
+	parser = argparse.ArgumentParser(description='Una API per a recullir invormacio de varis NAS Synology que tinguin la versio 6 o mes.', epilog="Per configuracio adicional anar a config/config.yaml")
+	parser.add_argument('-e', '--excel', help='Guardar la informacio a un excel, per defecte esta desactivat', action="store_true")
+	parser.add_argument('-q', '--quiet', help='Nomes mostra els errors i el missatge de acabada per pantalla.', action="store_false")
+	parser.add_argument('-f', '--file', help='Especificar el fitxer de excel a on guardar. Per defecte es revisio_copies_seguretat_synology_vs1.xlsx', default="revisio_copies_seguretat_synology_vs1.xlsx", metavar="RUTA")
+	parser.add_argument('-d', '--date', type=int, help='La cantitat de temps (en segons) enrere que agafara les dades de copies. Per defecte es 2592000(un mes)', default=2592000, metavar='SEC')
+	parser.add_argument('-v', '--versio', help='Mostra la versio', action='version', version='Synology_API-NPP v1.7.0')
+	global args
+	args = parser.parse_args()
 
-parser = argparse.ArgumentParser(description='Una API per a recullir invormacio de varis NAS Synology que tinguin la versio 6 o mes.', epilog="Per configuracio adicional anar a config/config.yaml")
-parser.add_argument('-e', '--excel', help='Guardar la informacio a un excel, per defecte esta desactivat', action="store_true")
-parser.add_argument('-q', '--quiet', help='Nomes mostra els errors i el missatge de acabada per pantalla.', action="store_false")
-parser.add_argument('-f', '--file', help='Especificar el fitxer de excel a on guardar. Per defecte es revisio_copies_seguretat_synology_vs1.xlsx', default="revisio_copies_seguretat_synology_vs1.xlsx", metavar="RUTA")
-parser.add_argument('-d', '--date', type=int, help='La cantitat de temps (en segons) enrere que agafara les dades de copies. Per defecte es 2592000(un mes)', default=2592000, metavar='SEC')
-parser.add_argument('-v', '--versio', help='Mostra la versio', action='version', version='Synology_API-NPP vs1.6.9')
-args = parser.parse_args()
+	global current_transaction
+	current_transaction = 2
+	global fitxer
+	fitxer = args.file 
 
-current_transaction = 2
-fitxer = args.file 
+	if not(exists("config/config.yaml")):
+		print("Emplena el fitxer de configuracio de Base de Dades a config/config.yaml")
+		article_info = [
+			{
+				'BD': {
+				'host' : 'localhost',
+				'user': 'root',
+				'passwd': 'patata'
+				},
+				'data': str(temps())
+			}
+		]
+		with open("config/config.yaml", 'w') as yamlfile:
+			data = yaml.dump(article_info, yamlfile)
 
-if not(exists("config/config.yaml")):
-	print("Emplena el fitxer de configuracio de Base de Dades a config/config.yaml")
-	article_info = [
-    	{
-        	'BD': {
-    	    'host' : 'localhost',
-    	    'user': 'root',
-    	    'passwd': 'patata'
-    	    },
-			'data': str(temps())
-    	}
-	]
-	with open("config/config.yaml", 'w') as yamlfile:
-		data = yaml.dump(article_info, yamlfile)
+	with open("config/config.yaml", "r") as yamlfile:
+		data = yaml.load(yamlfile, Loader=yaml.FullLoader)
 
-with open("config/config.yaml", "r") as yamlfile:
-    data = yaml.load(yamlfile, Loader=yaml.FullLoader)
+	servidor = data[0]['BD']['host']
+	usuari = data[0]['BD']['user']
+	contrassenya = data[0]['BD']['passwd']
 
-servidor = data[0]['BD']['host']
-usuari = data[0]['BD']['user']
-contrassenya = data[0]['BD']['passwd']
+	global taulabd
+	taulabd = bd(servidor, usuari, contrassenya)
 
-taulabd = bd(servidor, usuari, contrassenya)
-
-if exists(fitxer) == False:
-	workbook = Workbook()
-	prepExcel(workbook, False)
-	workbook.save(fitxer)
-elif args.excel:
-	try:
+	global workbook
+	if exists(fitxer) == False:
+		workbook = Workbook()
+		prepExcel(workbook, False)
+		workbook.save(fitxer)
+	elif args.excel:
+		try:
+			workbook = load_workbook(filename = fitxer)
+			prepExcel(workbook, True)
+		except:
+			print("Tanca el excel i torna-ho a provar")
+	else:
 		workbook = load_workbook(filename = fitxer)
-		prepExcel(workbook, True)
-	except:
-		print("Tanca el excel i torna-ho a provar")
-else:
-	workbook = load_workbook(filename = fitxer)
 
 
-llistaTransf = []
-llistadispCopia = []
-llistaNAS = []
-dadesCopiesTotes = recoleccioDades(workbook)
-num_nas = len(dadesCopiesTotes)
-
-# y es cada transaccio (es reseteja per cada dispositiu)
-# z es personalitzat que es per cada dispositiu que tingui transaccio (es reseteja per cada NAS)
-# x es cada dispositiu (es reseteja per cada NAS)
-# nas es cada nas (es reseteja cada execucio)
-# current_transaction es cada transaccio (es reseteja cada execucio)
-nas = 0
-nom_dispositiu=""
-for nas in tqdm (range(num_nas), desc="Processar Dades", disable=args.quiet):
-	nom_nas = taulabd[nas][0]
-	id_pandora = taulabd[nas][5]
-	num_copies = int(dadesCopiesTotes[nas]['data']['total'])
-	tamanyLliure=tamanyRestant(nas)
-	x = 0
-	z = 0
-	while x < num_copies: 
-		if len(dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list']) != 0:
-			num_transferencies = len(dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'])
-
-			y=0
-			for y in tqdm (range (num_transferencies), desc=nom_nas +" | "+ dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['device_name'], disable=not(args.quiet)):
-				nom_dispositiu = dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['device_name']
-				status = statusConvertor(dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['status'])
-				tamany_transferencia = dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['transfered_bytes']
-				temps_finalitzacio = dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['time_end']
-
-				file_time = datetime.datetime.fromtimestamp(temps_finalitzacio)
-				dataF=file_time.strftime('%Y-%m-%d')
-				if y+1 < num_transferencies:
-					u=1 #no se que fa
-				else:
-					llistaTransf.append({"data":dataF, "status":status, "tamany_transferenciaMB":(tamany_transferencia/1024)/1024})
-				if args.excel:
-					escriptorExcel(nom_dispositiu, status, temps_finalitzacio, tamany_transferencia, workbook, y, z, nom_nas, tamanyLliure)
-					try:
-						workbook.save(fitxer)
-					except:
-						now = datetime.datetime.now()
-						date_string = now.strftime('%Y-%m-%d--%H-%M-%S-permisos')
-						f = open("errorLogs/"+date_string+".txt",'w')
-						f.write("Error de permisos en obrir el Excel (Pot ser que el excel estigui obert?)")
-						f.close()
-						print("Error de permisos")
-			z += 1
-		llistadispCopia.append({"nomDispositiu":nom_dispositiu, "Transferencies":llistaTransf})
-		nom_dispositiu = ""
-		llistaTransf = []
-		x += 1
-	llistaNAS.append({"nomNAS":nom_nas, "ID Pandora":id_pandora, "copies":llistadispCopia})
+	llistaTransf = []
 	llistadispCopia = []
-	nas +=1
-escriureDadesJSON([{"NAS":llistaNAS}])
+	llistaNAS = []
+	dadesCopiesTotes = recoleccioDades(workbook)
+	num_nas = len(dadesCopiesTotes)
+
+	# y es cada transaccio (es reseteja per cada dispositiu)
+	# z es personalitzat que es per cada dispositiu que tingui transaccio (es reseteja per cada NAS)
+	# x es cada dispositiu (es reseteja per cada NAS)
+	# nas es cada nas (es reseteja cada execucio)
+	# current_transaction es cada transaccio (es reseteja cada execucio)
+	nas = 0
+	nom_dispositiu=""
+	for nas in tqdm (range(num_nas), desc="Processar Dades", disable=args.quiet):
+		nom_nas = taulabd[nas][0]
+		id_pandora = taulabd[nas][5]
+		num_copies = int(dadesCopiesTotes[nas]['data']['total'])
+		tamanyLliure=tamanyRestant(nas)
+		x = 0
+		z = 0
+		while x < num_copies: 
+			if len(dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list']) != 0:
+				num_transferencies = len(dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'])
+
+				y=0
+				for y in tqdm (range (num_transferencies), desc=nom_nas +" | "+ dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['device_name'], disable=not(args.quiet)):
+					nom_dispositiu = dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['device_name']
+					status = statusConvertor(dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['status'])
+					tamany_transferencia = dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['transfered_bytes']
+					temps_finalitzacio = dadesCopiesTotes[nas]['data']['device_list'][x]['transfer_list'][y]['time_end']
+
+					file_time = datetime.datetime.fromtimestamp(temps_finalitzacio)
+					dataF=file_time.strftime('%Y-%m-%d')
+					if y+1 < num_transferencies:
+						u=1 #no se que fa
+					else:
+						llistaTransf.append({"data":dataF, "status":status, "tamany_transferenciaMB":(tamany_transferencia/1024)/1024})
+					if args.excel:
+						escriptorExcel(nom_dispositiu, status, temps_finalitzacio, tamany_transferencia, workbook, y, z, nom_nas, tamanyLliure)
+						try:
+							workbook.save(fitxer)
+						except:
+							now = datetime.datetime.now()
+							date_string = now.strftime('%Y-%m-%d--%H-%M-%S-permisos')
+							f = open("errorLogs/"+date_string+".txt",'w')
+							f.write("Error de permisos en obrir el Excel (Pot ser que el excel estigui obert?)")
+							f.close()
+							print("Error de permisos")
+				z += 1
+			llistadispCopia.append({"nomDispositiu":nom_dispositiu, "Transferencies":llistaTransf})
+			nom_dispositiu = ""
+			llistaTransf = []
+			x += 1
+		llistaNAS.append({"nomNAS":nom_nas, "ID Pandora":id_pandora, "copies":llistadispCopia})
+		llistadispCopia = []
+		nas +=1
+	escriureDadesJSON([{"NAS":llistaNAS}])
