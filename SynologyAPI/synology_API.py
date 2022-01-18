@@ -1,4 +1,3 @@
-from audioop import add
 import requests
 import json
 from datetime import datetime,timezone
@@ -6,8 +5,8 @@ import datetime
 from os.path import exists	
 from openpyxl import Workbook
 from openpyxl import load_workbook
-from openpyxl.formatting.rule import ColorScaleRule, CellIsRule, FormulaRule
-from openpyxl.styles import Color, PatternFill, Font, Border
+from openpyxl.formatting.rule import ColorScaleRule
+from openpyxl.styles import PatternFill, Font
 from openpyxl.styles.differential import DifferentialStyle
 from openpyxl.formatting import Rule
 import os
@@ -16,14 +15,15 @@ import mysql.connector
 import yaml
 from tqdm import tqdm
 
-# Escriure o llegir del fitxer de config/config.yaml, en el qual es guarda la ultima data on es va agafar dades de synology menys un mes
+# Escriure o llegir del fitxer de config/config.yaml, en el qual es guarda la ultima data on es va agafar dades de synology
 # WoR determina si escriu "w" o si llegeix "r"
 # si es tria l'opcio de llegir retorna un string amb el temps en utc timestamp, sino no retorna res 
+# Es crida cuan es vol saber la ultima vegada desde quin punt s'han d'agafar les dades de les copies o per escriure el mateix
 def Data(WoR):
 	if WoR == "w":
 		with open("config/config.yaml") as f:
 			list_doc = yaml.safe_load(f)
-		list_doc[0]['data']=str(temps()-2592000)
+		list_doc[0]['data']=str(temps())
 		with open("config/config.yaml", 'w') as yamlfilew:
 			yaml.dump(list_doc, yamlfilew)
 			
@@ -87,7 +87,7 @@ def logout(url, sid, cookie):
 #Els parametres son la sid i la cookie per identificació i la url del NAS al cual recolectar les dades
 #Retorna les dades en format json i en cas de que dongui error retorna un text en format json sense dades per aixis evitar el issue #3 "Error en les dades que retorna despres de que es trobi amb un nas sense connexio"
 def InfoCopies(url, cookie, sid):#6 issue. A vegades dona error sense motiu aparent al fer-ho una segona vega es soluciona
-	copies_parameters = {"api":"SYNO.ActiveBackup.Overview", "version":"1", "method":"list_device_transfer_size", "time_start": int(Data("r")), "time_end": temps(), "_sid": sid}
+	copies_parameters = {"api":"SYNO.ActiveBackup.Overview", "version":"1", "method":"list_device_transfer_size", "time_start": int(Data("r"))-args.date, "time_end": temps(), "_sid": sid}
 	response = requests.get(url, params=copies_parameters, headers={"cookie":cookie}).json()
 	if	response['success'] == True:
 		if args.quiet:
@@ -413,7 +413,8 @@ parser = argparse.ArgumentParser(description='Una API per a recullir invormacio 
 parser.add_argument('-e', '--excel', help='Guardar la informacio a un excel, per defecte esta desactivat', action="store_true")
 parser.add_argument('-q', '--quiet', help='Nomes mostra els errors i el missatge de acabada per pantalla.', action="store_false")
 parser.add_argument('-f', '--file', help='Especificar el fitxer de excel a on guardar. Per defecte es revisio_copies_seguretat_synology_vs1.xlsx', default="revisio_copies_seguretat_synology_vs1.xlsx", metavar="RUTA")
-parser.add_argument('-v', '--versio', help='Mostra la versio', action='version', version='Synology_API-NPP vs1.6.8')
+parser.add_argument('-d', '--date', type=int, help='La cantitat de temps (en segons) enrere que agafara les dades de copies. Per defecte es 2592000(un mes)', default=2592000, metavar='SEC')
+parser.add_argument('-v', '--versio', help='Mostra la versio', action='version', version='Synology_API-NPP vs1.6.9')
 args = parser.parse_args()
 
 current_transaction = 2
@@ -428,7 +429,7 @@ if not(exists("config/config.yaml")):
     	    'user': 'root',
     	    'passwd': 'patata'
     	    },
-			'data': str(temps()-2592000)
+			'data': str(temps())
     	}
 	]
 	with open("config/config.yaml", 'w') as yamlfile:

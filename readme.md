@@ -28,13 +28,13 @@
 
 Utilitzant pip:
 
-`pip install SynologyAPI-NPP`
+```pip install SynologyAPI-NPP```
 
 Manualment:
 
-`wget https://files.pythonhosted.org/packages/3a/2b/8eb8454068f2004a927258f82509b0961c7c72d4b7d958a317819608d11d/SynologyAPI-NPP-1.6.8.tar.gz`
+```wget https://files.pythonhosted.org/packages/3a/2b/8eb8454068f2004a927258f82509b0961c7c72d4b7d958a317819608d11d/SynologyAPI-NPP-1.6.8.tar.gz```
 
-`tar -xvzf SynologyAPI-NPP-1.6.8.tar.gz`
+```tar -xvzf SynologyAPI-NPP-1.6.8.tar.gz```
 
 
 
@@ -43,12 +43,21 @@ Manualment:
 
 - Opcions
 ```
+usage: synology_API.py [-h] [-e] [-q] [-f RUTA] [-d SEC] [-v]
+
+Una API per a recullir invormacio de varis NAS Synology que tinguin la versio 6 o mes.
+
+optional arguments:
   -h, --help            show this help message and exit
   -e, --excel           Guardar la informacio a un excel, per defecte esta desactivat
   -q, --quiet           Nomes mostra els errors i el missatge de acabada per pantalla.
   -f RUTA, --file RUTA  Especificar el fitxer de excel a on guardar. Per defecte es
                         revisio_copies_seguretat_synology_vs1.xlsx
+  -d SEC, --date SEC    La cantitat de temps (en segons) enrere que agafara les dades de copies. Per defecte es
+                        2592000(un mes)
   -v, --versio          Mostra la versio
+
+Per configuracio adicional anar a config/config.yaml
 ```
 
 ### Errors coneguts

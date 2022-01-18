@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='SynologyAPI-NPP',
-      version='1.6.8',
+      version='1.6.9',
       description='API Basica per a synologys Active Backup For Buissiness',
       long_description="""
 # Synology Active Backup for Business API-NPP
