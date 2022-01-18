@@ -522,3 +522,6 @@ def main():
 		llistadispCopia = []
 		nas +=1
 	escriureDadesJSON([{"NAS":llistaNAS}])
+
+if __name__ =='__main__':
+    main()
