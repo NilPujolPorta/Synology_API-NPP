@@ -33,12 +33,17 @@ setup(name='SynologyAPI-NPP',
 
 - Opcions
 ```
+usage: PandoraFMS_API.cpython-39.pyc [-h] [-e] [-f RUTA] [-q] [-v] [-w URL]
+
+Una API per a recullir informacio de la web de PandoraFMS.
+
+optional arguments:
   -h, --help            show this help message and exit
   -e, --excel           Guardar la informacio a un excel, per defecte esta desactivat
+  -f RUTA, --file RUTA  Especificar el fitxer de excel a on guardar. Per defecte es: PandoraResum.xlsx
   -q, --quiet           Nomes mostra els errors i el missatge de acabada per pantalla.
-  -f RUTA, --file RUTA  Especificar el fitxer de excel a on guardar. Per defecte es
-                        revisio_copies_seguretat_synology_vs1.xlsx
   -v, --versio          Mostra la versio
+  -w URL, --web URL     Especificar la web de PandoraFMS a on accedir. Per defecte es: http://pandora.eio.cat/pandora_console/include/api.php
 ```
 ## Instal·lacio
 - Utilitzant `pip`
