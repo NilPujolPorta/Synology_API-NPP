@@ -1,2 +1,2 @@
-from .synology_API import main
+from synology_API import main
 main()
