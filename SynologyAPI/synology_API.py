@@ -1,21 +1,22 @@
-import requests
 import json
 from datetime import datetime,timezone
 import datetime
-from os.path import exists	
+from os.path import exists
+import os
+
+import requests
 from openpyxl import Workbook
 from openpyxl import load_workbook
 from openpyxl.formatting.rule import ColorScaleRule
 from openpyxl.styles import PatternFill, Font
 from openpyxl.styles.differential import DifferentialStyle
 from openpyxl.formatting import Rule
-import os
 import argparse
 import mysql.connector
 import yaml
 from tqdm import tqdm
 
-__version__ = "1.7.0"
+__version__ = "1.7.1"
 
 # Escriure o llegir del fitxer de config/config.yaml, en el qual es guarda la ultima data on es va agafar dades de synology
 # WoR determina si escriu "w" o si llegeix "r"
@@ -23,14 +24,14 @@ __version__ = "1.7.0"
 # Es crida cuan es vol saber la ultima vegada desde quin punt s'han d'agafar les dades de les copies o per escriure el mateix
 def Data(WoR):
 	if WoR == "w":
-		with open("config/config.yaml") as f:
+		with open(conf) as f:
 			list_doc = yaml.safe_load(f)
 		list_doc[0]['data']=str(temps())
-		with open("config/config.yaml", 'w') as yamlfilew:
+		with open(conf, 'w') as yamlfilew:
 			yaml.dump(list_doc, yamlfilew)
 			
 	elif WoR == "r":
-		with open("config/config.yaml", 'r') as yamlfiler:
+		with open(conf, 'r') as yamlfiler:
 			data = yaml.load(yamlfiler, Loader=yaml.FullLoader)
 			return(data[0]['data'])
 	else:
@@ -59,7 +60,7 @@ def login(user, password, url, cookie):
 		print("Login erroni")
 		now = datetime.datetime.now()
 		date_string = now.strftime('%Y-%m-%d--%H-%M-%S-login')
-		f = open("errorLogs/"+date_string+".txt",'w')
+		f = open(ruta+"/errorLogs/"+date_string+".txt",'w')
 		f.write(str(response))
 		f.close()
 		print(response)
@@ -80,7 +81,7 @@ def logout(url, sid, cookie):
 		print("Logout erroni")
 		now = datetime.datetime.now()
 		date_string = now.strftime('%Y-%m-%d--%H-%M-%S-Logout')
-		f = open("errorLogs/"+date_string+".txt",'w')
+		f = open(ruta+"/errorLogs/"+date_string+".txt",'w')
 		f.write(str(response))
 		f.close()
 		print(response)
@@ -99,7 +100,7 @@ def InfoCopies(url, cookie, sid):#6 issue. A vegades dona error sense motiu apar
 		print("Operacio de dades de backup erroni")
 		now = datetime.datetime.now()
 		date_string = now.strftime('%Y-%m-%d--%H-%M-%S-Backups')
-		f = open("errorLogs/"+date_string+".txt",'w')
+		f = open(ruta+"/errorLogs/"+date_string+".txt",'w')
 		f.write(str(response))
 		f.close()
 		print(response)
@@ -124,7 +125,7 @@ def recoleccioDades(workbook):
 			print("Error en la query")
 			now = datetime.datetime.now()
 			date_string = now.strftime('%Y-%m-%d--%H-%M-%S-Query')
-			a = open("errorLogs/"+date_string+".txt",'w')
+			a = open(ruta+"/errorLogs/"+date_string+".txt",'w')
 			a.write(str(query))
 			a.close()
 		user = x[1]
@@ -141,7 +142,7 @@ def recoleccioDades(workbook):
 		except:
 			now = datetime.datetime.now()
 			date_string = now.strftime('%Y-%m-%d--%H-%M-%S-Conexio')
-			f = open("errorLogs/"+date_string+".txt",'w')
+			f = open(ruta+"/errorLogs/"+date_string+".txt",'w')
 			f.write("Error en connectar amb la maquina "+nom)
 			f.close()
 			print("Error en connectar amb la maquina")
@@ -190,7 +191,7 @@ def tamanyRestant(i):
 	except Exception as e:
 		now = datetime.datetime.now()
 		date_string = now.strftime('%Y-%m-%d--%H-%M-%S-Query')
-		a = open("errorLogs/"+date_string+".txt",'w')
+		a = open(ruta+"/errorLogs/"+date_string+".txt",'w')
 		a.write(str(e))
 		a.close()
 	user = taulabd[i][1]
@@ -205,7 +206,7 @@ def tamanyRestant(i):
 	except Exception as e:
 		now = datetime.datetime.now()
 		date_string = now.strftime('%Y-%m-%d--%H-%M-%S-Conexio')
-		f = open("errorLogs/"+date_string+".txt",'w')
+		f = open(ruta+"/errorLogs/"+date_string+".txt",'w')
 		f.write("Error en connectar amb la maquina "+ nom)
 		f.close()
 		return("Fallo en la conexio")
@@ -337,7 +338,6 @@ def prepExcel(workbook, existeix):
 	else:
 		wsdefault = workbook['Sheet']
 		formatar(wsdefault, workbook)
-		workbook.save(fitxer)
 	wsdefault.cell(row=1, column=1, value="Nom NAS")
 	wsdefault.cell(row=1, column=2, value="Nom Dispositiu")
 	wsdefault.cell(row=1, column=3, value="Data")
@@ -393,16 +393,16 @@ def bd(servidor, usuari, contrassenya):
 #El paramatra es la llista a on estan guardades les dades tot i que no faria falta posarla com a parametre ja que es global
 #No retorna res
 def escriureDadesJSON(llistaFinal):
-	if exists("dadesSynology.json") == True:
-			os.remove("dadesSynology.json")
+	if exists(ruta+"/dadesSynology.json") == True:
+			os.remove(ruta+"/dadesSynology.json")
 	try:
-		with open("dadesSynology.json", 'w') as f:
+		with open(ruta+"/dadesSynology.json", 'w') as f:
 			json.dump(llistaFinal, f, indent = 4)
 	except Exception as e:
 			print("Error d'escriptura de json")
 			now = datetime.datetime.now()
 			date_string = now.strftime('%Y-%m-%d--%H-%M-%S-json')
-			f = open("errorLogs/"+date_string+".txt",'w')
+			f = open(ruta+"/errorLogs/"+date_string+".txt",'w')
 			f.write("Error d'escriptura de json "+str(e))
 			f.close()
 	if not(args.quiet):
@@ -414,18 +414,23 @@ def main():
 	parser = argparse.ArgumentParser(description='Una API per a recullir invormacio de varis NAS Synology que tinguin la versio 6 o mes.', epilog="Per configuracio adicional anar a config/config.yaml")
 	parser.add_argument('-e', '--excel', help='Guardar la informacio a un excel, per defecte esta desactivat', action="store_true")
 	parser.add_argument('-q', '--quiet', help='Nomes mostra els errors i el missatge de acabada per pantalla.', action="store_false")
-	parser.add_argument('-f', '--file', help='Especificar el fitxer de excel a on guardar. Per defecte es revisio_copies_seguretat_synology_vs1.xlsx', default="revisio_copies_seguretat_synology_vs1.xlsx", metavar="RUTA")
+	parser.add_argument('-f', '--file', help="Especificar la ruta absoluta a on guardar el fitxer d'excel. Per defecte es revisio_copies_seguretat_synology_vs1.xlsx", default="revisio_copies_seguretat_synology_vs1.xlsx", metavar="RUTA")
 	parser.add_argument('-d', '--date', type=int, help='La cantitat de temps (en segons) enrere que agafara les dades de copies. Per defecte es 2592000(un mes)', default=2592000, metavar='SEC')
 	parser.add_argument('-v', '--versio', help='Mostra la versio', action='version', version='Synology_API-NPP v' + __version__)
 	global args
 	args = parser.parse_args()
-
+	global ruta
+	ruta = os.path.dirname(os.path.abspath(__file__))
+	global conf
+	conf = ruta+"/config/config.yaml"
 	global current_transaction
 	current_transaction = 2
 	global fitxer
 	fitxer = args.file 
 
-	if not(exists("config/config.yaml")):
+	if not(os.path.exists(ruta+"/errorLogs")):
+		os.mkdir(ruta+"/errorLogs")
+	if not(exists(conf)):
 		print("Emplena el fitxer de configuracio de Base de Dades a config/config.yaml")
 		article_info = [
 			{
@@ -437,10 +442,12 @@ def main():
 				'data': str(temps())
 			}
 		]
-		with open("config/config.yaml", 'w') as yamlfile:
+		if not(os.path.exists(ruta+"/config")):
+			os.mkdir(ruta+"/config")
+		with open(conf, 'w') as yamlfile:
 			data = yaml.dump(article_info, yamlfile)
 
-	with open("config/config.yaml", "r") as yamlfile:
+	with open(conf, "r") as yamlfile:
 		data = yaml.load(yamlfile, Loader=yaml.FullLoader)
 
 	servidor = data[0]['BD']['host']
@@ -509,7 +516,7 @@ def main():
 						except:
 							now = datetime.datetime.now()
 							date_string = now.strftime('%Y-%m-%d--%H-%M-%S-permisos')
-							f = open("errorLogs/"+date_string+".txt",'w')
+							f = open(ruta+"/errorLogs/"+date_string+".txt",'w')
 							f.write("Error de permisos en obrir el Excel (Pot ser que el excel estigui obert?)")
 							f.close()
 							print("Error de permisos")
