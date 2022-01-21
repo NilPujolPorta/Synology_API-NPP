@@ -2,7 +2,8 @@
 # Synology Active Backup for Business API-NPP
 ## Informació
 - Per executar el programa s'ha de tenir instalat el python versio 3 o mes.
-- Requeriments a requirements.txt.
+- Requeriments a requirements.txt
+- Requereix una base de dades MySQL amb la estructura en el apartat [Estructura de la base de dades](#estructura-de-la-base-de-dades).
 - Configuració de la base de dades a `config/config.yaml`
 - Logs de errors a `errorLogs/*txt`
 - El fitxer compilar.bat transforma el .py en .pyc que es mes eficient i rapid.
@@ -34,7 +35,7 @@
 
   ```wget https://files.pythonhosted.org/packages/3a/2b/8eb8454068f2004a927258f82509b0961c7c72d4b7d958a317819608d11d/SynologyAPI-NPP-1.6.8.tar.gz```
 
-  ```tar -xvzf SynologyAPI-NPP-1.6.8.tar.gz```
+  ```tar -xvzf SynologyAPI-NPP-1.7.1.tar.gz```
 
 
 
