@@ -48,7 +48,7 @@
 
 ### Opcions
 ```
-usage: synology_API.py [-h] [-e] [-q] [-f RUTA] [-d SEC] [-v]
+usage: SynologyAPI-NPP [-h] [-e] [-q] [-f RUTA] [--json-file RUTA] [-d SEC] [-v]
 
 Una API per a recullir invormacio de varis NAS Synology que tinguin la versio 6 o mes.
 
@@ -56,8 +56,8 @@ optional arguments:
   -h, --help            show this help message and exit
   -e, --excel           Guardar la informacio a un excel, per defecte esta desactivat
   -q, --quiet           Nomes mostra els errors i el missatge de acabada per pantalla.
-  -f RUTA, --file RUTA  Especificar el fitxer de excel a on guardar. Per defecte es
-                        revisio_copies_seguretat_synology_vs1.xlsx
+  -f RUTA, --file RUTA  Especificar la ruta absoluta a on guardar el fitxer d'excel. Per defecte es: la ruta on esta aquest fitxer + "revisio_copies_seguretat_synology_vs1.xlsx"
+  --json-file RUTA      El directori a on es guardara el fitxer de dades json. Per defecte es: la ruta on ho esta aquest fitxer
   -d SEC, --date SEC    La cantitat de temps (en segons) enrere que agafara les dades de copies. Per defecte es
                         2592000(un mes)
   -v, --versio          Mostra la versio

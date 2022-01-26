@@ -1,3 +1,4 @@
+from ast import parse
 import json
 from datetime import datetime,timezone
 import datetime
@@ -393,10 +394,10 @@ def bd(servidor, usuari, contrassenya):
 #El paramatra es la llista a on estan guardades les dades tot i que no faria falta posarla com a parametre ja que es global
 #No retorna res
 def escriureDadesJSON(llistaFinal):
-	if exists(ruta+"/dadesSynology.json") == True:
-			os.remove(ruta+"/dadesSynology.json")
+	if exists(args.json_file+"/dadesSynology.json") == True:
+			os.remove(args.json_file+"/dadesSynology.json")
 	try:
-		with open(ruta+"/dadesSynology.json", 'w') as f:
+		with open(args.json_file+"/dadesSynology.json", 'w') as f:
 			json.dump(llistaFinal, f, indent = 4)
 	except Exception as e:
 			print("Error d'escriptura de json")
@@ -411,16 +412,17 @@ def escriureDadesJSON(llistaFinal):
 #Juntament amb les altres funcions agafa les dades de varis synologys les processa en un JSON i, si s'escull l'opcio un excel
 #No te paramatres pero te unes quantes variables globals
 def main():
+	global ruta
+	ruta = os.path.dirname(os.path.abspath(__file__))
 	parser = argparse.ArgumentParser(description='Una API per a recullir invormacio de varis NAS Synology que tinguin la versio 6 o mes.', epilog="Per configuracio adicional anar a config/config.yaml")
 	parser.add_argument('-e', '--excel', help='Guardar la informacio a un excel, per defecte esta desactivat', action="store_true")
 	parser.add_argument('-q', '--quiet', help='Nomes mostra els errors i el missatge de acabada per pantalla.', action="store_false")
-	parser.add_argument('-f', '--file', help="Especificar la ruta absoluta a on guardar el fitxer d'excel. Per defecte es revisio_copies_seguretat_synology_vs1.xlsx", default="revisio_copies_seguretat_synology_vs1.xlsx", metavar="RUTA")
+	parser.add_argument('-f', '--file', help="Especificar la ruta absoluta a on guardar el fitxer d'excel. Per defecte es "+ruta+"/revisio_copies_seguretat_synology_vs1.xlsx", default=ruta+"/revisio_copies_seguretat_synology_vs1.xlsx", metavar="RUTA")
+	parser.add_argument('--json-file', help='El directori a on es guardara el fitxer de dades json. Per defecte es:'+ruta, default=ruta, metavar='RUTA')
 	parser.add_argument('-d', '--date', type=int, help='La cantitat de temps (en segons) enrere que agafara les dades de copies. Per defecte es 2592000(un mes)', default=2592000, metavar='SEC')
 	parser.add_argument('-v', '--versio', help='Mostra la versio', action='version', version='Synology_API-NPP v' + __version__)
 	global args
 	args = parser.parse_args()
-	global ruta
-	ruta = os.path.dirname(os.path.abspath(__file__))
 	global conf
 	conf = ruta+"/config/config.yaml"
 	global current_transaction
