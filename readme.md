@@ -31,9 +31,12 @@
 
   ```pip install SynologyAPI-NPP```
   
+- Clonant el github:
+  ```gh repo clone NilPujolPorta/Synology_API-NPP```
+  
 - Manualment:
 
-  ```wget https://files.pythonhosted.org/packages/3a/2b/8eb8454068f2004a927258f82509b0961c7c72d4b7d958a317819608d11d/SynologyAPI-NPP-1.6.8.tar.gz```
+  ```wget https://files.pythonhosted.org/packages/3a/2b/8eb8454068f2004a927258f82509b0961c7c72d4b7d958a317819608d11d/SynologyAPI-NPP-1.7.1.tar.gz```
 
   ```tar -xvzf SynologyAPI-NPP-1.7.1.tar.gz```
 
