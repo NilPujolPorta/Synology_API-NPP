@@ -16,7 +16,7 @@ import mysql.connector
 import yaml
 from tqdm import tqdm
 
-__version__ = "1.7.2"
+__version__ = "1.7.3"
 
 # Escriure o llegir del fitxer de config/config.yaml, en el qual es guarda la ultima data on es va agafar dades de synology
 # WoR determina si escriu "w" o si llegeix "r"
@@ -430,6 +430,8 @@ def main(args):
 
 	if not(os.path.exists(ruta+"/errorLogs")):
 		os.mkdir(ruta+"/errorLogs")
+	if not(os.path.exists(ruta+"/config")):
+		os.mkdir(ruta+"/config")
 	if not(exists(conf)):
 		print("Emplena el fitxer de configuracio de Base de Dades a config/config.yaml")
 		article_info = [
