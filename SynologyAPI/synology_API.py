@@ -350,13 +350,13 @@ def prepExcel(workbook, existeix):
 #Acces a la base de dades i recoleccio de la informacio
 #Els parametres son les credencials i la ip/host de la base de dades
 #Retorna una llista igual a la base de dades
-def bd(servidor, usuari, contrassenya):
+def bd(servidor, usuari, contrassenya, database):
 	try:
 		mydb =mysql.connector.connect(
     	    host=servidor,
     	    user=usuari,
     	    password=contrassenya,
-    	    database="synology"
+    	    database=database
     	    )
 		mycursor = mydb.cursor(buffered=True)
 		if args.quiet:
@@ -375,7 +375,7 @@ def bd(servidor, usuari, contrassenya):
 	            host=servidor,
 	            user=usuari,
 	            password=contrassenya,
-	            database="synology"
+	            database=database
 	            )
 			mycursor = mydb.cursor(buffered=True)
 			mycursor.execute("CREATE TABLE dispositius (nom VARCHAR(255), usuari VARCHAR(255), contassenya VARCHAR(255), url VARCHAR(255), cookie VARCHAR(400), pandoraID INT(3));")
@@ -439,7 +439,8 @@ def main():
 				'BD': {
 				'host' : 'localhost',
 				'user': 'root',
-				'passwd': 'patata'
+				'passwd': 'patata',
+				'database':'synology'
 				},
 				'data': str(temps())
 			}
@@ -455,9 +456,10 @@ def main():
 	servidor = data[0]['BD']['host']
 	usuari = data[0]['BD']['user']
 	contrassenya = data[0]['BD']['passwd']
+	database = data[0]['BD']['database']
 
 	global taulabd
-	taulabd = bd(servidor, usuari, contrassenya)
+	taulabd = bd(servidor, usuari, contrassenya, database)
 
 	global workbook
 	if exists(fitxer) == False:
