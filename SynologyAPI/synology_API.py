@@ -16,7 +16,7 @@ import mysql.connector
 import yaml
 from tqdm import tqdm
 
-__version__ = "1.7.1"
+__version__ = "1.7.2"
 
 # Escriure o llegir del fitxer de config/config.yaml, en el qual es guarda la ultima data on es va agafar dades de synology
 # WoR determina si escriu "w" o si llegeix "r"
@@ -47,7 +47,7 @@ def temps():
 #Es logueja en la webapi de synology 
 #Els parametres son les credencials, la url per fer el logeig i la cookie identificacio enlloc de la sid.
 #Retorna la sid que servira per identificar-nos en les operacions seguents
-def login(user, password, url, cookie):
+def login(user, password, url, cookie, args):
 	login_parameters = {"api":"SYNO.API.Auth", "version":"3", "method":"login", "account": user, "passwd": password, "session":"ActiveBackup", "format":"cookie"}
 	my_headers = {"cookie": cookie}
 	response = requests.get(url, params=login_parameters, headers=my_headers).json()
@@ -69,7 +69,7 @@ def login(user, password, url, cookie):
 #Tanca la sessió anteriorment oberta per la funcio login
 #Els paramatres es la url del lloc de logout i la sid i la cookie per idenficació
 #Retorna la resposta de la webapi tan si es error com si es correcte
-def logout(url, sid, cookie):
+def logout(url, sid, cookie, args):
 	logout_parameters = {"api":"SYNO.API.Auth", "version":"2", "method":"logout", "session":"ActiveBackup"}
 	my_headers={"cookie": cookie}
 	response = requests.get(url, params=logout_parameters, headers=my_headers).json()
@@ -89,7 +89,7 @@ def logout(url, sid, cookie):
 #Aconsegueix la informacio de les copies de seguretat de un NAS
 #Els parametres son la sid i la cookie per identificació i la url del NAS al cual recolectar les dades
 #Retorna les dades en format json i en cas de que dongui error retorna un text en format json sense dades per aixis evitar el issue #3 "Error en les dades que retorna despres de que es trobi amb un nas sense connexio"
-def InfoCopies(url, cookie, sid):#6 issue. A vegades dona error sense motiu aparent al fer-ho una segona vega es soluciona
+def InfoCopies(url, cookie, sid, args):#6 issue. A vegades dona error sense motiu aparent al fer-ho una segona vega es soluciona
 	copies_parameters = {"api":"SYNO.ActiveBackup.Overview", "version":"1", "method":"list_device_transfer_size", "time_start": int(Data("r"))-args.date, "time_end": temps(), "_sid": sid}
 	response = requests.get(url, params=copies_parameters, headers={"cookie":cookie}).json()
 	if	response['success'] == True:
@@ -109,7 +109,7 @@ def InfoCopies(url, cookie, sid):#6 issue. A vegades dona error sense motiu apar
 #Recull totes les dades de tots els NAS
 #El paramatre workbook es per si la opció del excel es activa escriu dades el excel si no es pot connectar amb la maquina
 #Retorna un array de text en format json amb les dades de cada NAS
-def recoleccioDades(workbook):
+def recoleccioDades(workbook, args):
 	global current_transaction
 	global fitxer
 	Backups = []
@@ -323,7 +323,7 @@ def formatar(wsdefault, workbook):
 #Prepara el excel en cas de que no existis abans (borrant dades ateriors i posant la capçalera)
 #L'únic parametre es el document d'excel
 #No retorna res.
-def prepExcel(workbook, existeix):
+def prepExcel(workbook, existeix, args):
 	if args.quiet:
 		print("Preparant excel")
 	if existeix:
@@ -349,7 +349,7 @@ def prepExcel(workbook, existeix):
 #Acces a la base de dades i recoleccio de la informacio
 #Els parametres son les credencials i la ip/host de la base de dades
 #Retorna una llista igual a la base de dades
-def bd(servidor, usuari, contrassenya, database):
+def bd(servidor, usuari, contrassenya, database, args):
 	try:
 		mydb =mysql.connector.connect(
     	    host=servidor,
@@ -392,7 +392,7 @@ def bd(servidor, usuari, contrassenya, database):
 #Escriu les dades finals en un fitxer .json
 #El paramatra es la llista a on estan guardades les dades tot i que no faria falta posarla com a parametre ja que es global
 #No retorna res
-def escriureDadesJSON(llistaFinal):
+def escriureDadesJSON(llistaFinal, args):
 	if exists(args.json_file+"/dadesSynology.json") == True:
 			os.remove(args.json_file+"/dadesSynology.json")
 	try:
@@ -410,7 +410,7 @@ def escriureDadesJSON(llistaFinal):
 
 #Juntament amb les altres funcions agafa les dades de varis synologys les processa en un JSON i, si s'escull l'opcio un excel
 #No te paramatres pero te unes quantes variables globals
-def main():
+def main(args):
 	global ruta
 	ruta = os.path.dirname(os.path.abspath(__file__))
 	parser = argparse.ArgumentParser(description='Una API per a recullir invormacio de varis NAS Synology que tinguin la versio 6 o mes.', epilog="Per configuracio adicional anar a config/config.yaml")
@@ -420,8 +420,7 @@ def main():
 	parser.add_argument('--json-file', help='El directori a on es guardara el fitxer de dades json. Per defecte es:'+ruta, default=ruta, metavar='RUTA')
 	parser.add_argument('-d', '--date', type=int, help='La cantitat de temps (en segons) enrere que agafara les dades de copies. Per defecte es 2592000(un mes)', default=2592000, metavar='SEC')
 	parser.add_argument('-v', '--versio', help='Mostra la versio', action='version', version='Synology_API-NPP v' + __version__)
-	global args
-	args = parser.parse_args()
+	args = parser.parse_args(args)
 	global conf
 	conf = ruta+"/config/config.yaml"
 	global current_transaction
@@ -458,17 +457,17 @@ def main():
 	database = data[0]['BD']['database']
 
 	global taulabd
-	taulabd = bd(servidor, usuari, contrassenya, database)
+	taulabd = bd(servidor, usuari, contrassenya, database, args)
 
 	global workbook
 	if exists(fitxer) == False:
 		workbook = Workbook()
-		prepExcel(workbook, False)
+		prepExcel(workbook, False, args)
 		workbook.save(fitxer)
 	elif args.excel:
 		try:
 			workbook = load_workbook(filename = fitxer)
-			prepExcel(workbook, True)
+			prepExcel(workbook, True, args)
 		except:
 			print("Tanca el excel i torna-ho a provar")
 	else:
@@ -478,7 +477,7 @@ def main():
 	llistaTransf = []
 	llistadispCopia = []
 	llistaNAS = []
-	dadesCopiesTotes = recoleccioDades(workbook)
+	dadesCopiesTotes = recoleccioDades(workbook, args)
 	num_nas = len(dadesCopiesTotes)
 
 	# y es cada transaccio (es reseteja per cada dispositiu)
@@ -531,7 +530,7 @@ def main():
 		llistaNAS.append({"nomNAS":nom_nas, "ID Pandora":id_pandora, "copies":llistadispCopia})
 		llistadispCopia = []
 		nas +=1
-	escriureDadesJSON([{"NAS":llistaNAS}])
+	escriureDadesJSON([{"NAS":llistaNAS}], args)
 
 if __name__ =='__main__':
     main()
