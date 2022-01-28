@@ -16,7 +16,7 @@ import mysql.connector
 import yaml
 from tqdm import tqdm
 
-__version__ = "1.7.3"
+__version__ = "1.7.4"
 
 # Escriure o llegir del fitxer de config/config.yaml, en el qual es guarda la ultima data on es va agafar dades de synology
 # WoR determina si escriu "w" o si llegeix "r"
@@ -136,9 +136,9 @@ def recoleccioDades(workbook, args):
 		if args.quiet:
 			print(nom)
 		try:
-			sid = login(user, password, url, cookie)
-			Backups.append(InfoCopies(url2, cookie, sid))
-			logout(url, sid, cookie)
+			sid = login(user, password, url, cookie, args)
+			Backups.append(InfoCopies(url2, cookie, sid, args))
+			logout(url, sid, cookie, args)
 		except:
 			now = datetime.datetime.now()
 			date_string = now.strftime('%Y-%m-%d--%H-%M-%S-Conexio')
@@ -393,10 +393,8 @@ def bd(servidor, usuari, contrassenya, database, args):
 #El paramatra es la llista a on estan guardades les dades tot i que no faria falta posarla com a parametre ja que es global
 #No retorna res
 def escriureDadesJSON(llistaFinal, args):
-	if exists(args.json_file+"/dadesSynology.json") == True:
-			os.remove(args.json_file+"/dadesSynology.json")
 	try:
-		with open(args.json_file+"/dadesSynology.json", 'w') as f:
+		with open(args.json_file, 'w') as f:
 			json.dump(llistaFinal, f, indent = 4)
 	except Exception as e:
 			print("Error d'escriptura de json")
@@ -410,14 +408,15 @@ def escriureDadesJSON(llistaFinal, args):
 
 #Juntament amb les altres funcions agafa les dades de varis synologys les processa en un JSON i, si s'escull l'opcio un excel
 #No te paramatres pero te unes quantes variables globals
-def main(args):
+def main(args=None):
 	global ruta
 	ruta = os.path.dirname(os.path.abspath(__file__))
+	rutaJson = ruta+"/dadesSynology.json"
 	parser = argparse.ArgumentParser(description='Una API per a recullir invormacio de varis NAS Synology que tinguin la versio 6 o mes.', epilog="Per configuracio adicional anar a config/config.yaml")
 	parser.add_argument('-e', '--excel', help='Guardar la informacio a un excel, per defecte esta desactivat', action="store_true")
 	parser.add_argument('-q', '--quiet', help='Nomes mostra els errors i el missatge de acabada per pantalla.', action="store_false")
 	parser.add_argument('-f', '--file', help="Especificar la ruta absoluta a on guardar el fitxer d'excel. Per defecte es "+ruta+"/revisio_copies_seguretat_synology_vs1.xlsx", default=ruta+"/revisio_copies_seguretat_synology_vs1.xlsx", metavar="RUTA")
-	parser.add_argument('--json-file', help='El directori a on es guardara el fitxer de dades json. Per defecte es:'+ruta, default=ruta, metavar='RUTA')
+	parser.add_argument('--json-file', help='La ruta(fitxer inclos) a on es guardara el fitxer de dades json. Per defecte es:'+rutaJson, default=rutaJson, metavar='RUTA')
 	parser.add_argument('-d', '--date', type=int, help='La cantitat de temps (en segons) enrere que agafara les dades de copies. Per defecte es 2592000(un mes)', default=2592000, metavar='SEC')
 	parser.add_argument('-v', '--versio', help='Mostra la versio', action='version', version='Synology_API-NPP v' + __version__)
 	args = parser.parse_args(args)
@@ -534,5 +533,6 @@ def main(args):
 		nas +=1
 	escriureDadesJSON([{"NAS":llistaNAS}], args)
 
+#El que fa aixo es ajudar a que totes les execucions d'aquest fitxer iniciin la funcio main
 if __name__ =='__main__':
     main()
