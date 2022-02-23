@@ -22,7 +22,7 @@
 
 "cookie" Per aconseguir la cookie anar al Chrome(o similar) entrar al enllaç anterior i fer inspeccionar elemento; Una vegada alla anem a l'apartat de network clickem CONTROL+R cliquem al resultat que ens sortira i busquem on esta cookie
 
-"pandoraID" El numero identificador que te el grup de pandora per exemple Splendid foods  es 15
+"pandoraID" El numero identificador que te el grup de pandora.
 ```
 
 ## Instal·lació

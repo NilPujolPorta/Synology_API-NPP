@@ -16,7 +16,7 @@ import mysql.connector
 import yaml
 from tqdm import tqdm
 
-__version__ = "1.7.4"
+__version__ = "1.7.5"
 
 # Escriure o llegir del fitxer de config/config.yaml, en el qual es guarda la ultima data on es va agafar dades de synology
 # WoR determina si escriu "w" o si llegeix "r"
@@ -380,7 +380,7 @@ def bd(servidor, usuari, contrassenya, database, args):
 			mycursor.execute("CREATE TABLE dispositius (nom VARCHAR(255), usuari VARCHAR(255), contassenya VARCHAR(255), url VARCHAR(255), cookie VARCHAR(400), pandoraID INT(3));")
 		except:
 			print("Login BDD incorrecte")
-			quit()
+			return
 	taulabdi = []
 
 	mycursor.execute("SELECT * FROM dispositius")
@@ -459,7 +459,8 @@ def main(args=None):
 
 	global taulabd
 	taulabd = bd(servidor, usuari, contrassenya, database, args)
-
+	if taulabd == None:
+		return
 	global workbook
 	if exists(fitxer) == False:
 		workbook = Workbook()
