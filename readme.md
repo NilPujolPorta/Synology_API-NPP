@@ -11,6 +11,7 @@
 
 
 ## Estructura de la base de dades
+En una Base de dades que es digui "synology" un taula anomenada "dispositius":
 ```
 "nom" Nom identificatiu, no es pot repetir. SENSE ESPAIS!!!!
 
